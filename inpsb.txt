@@ -1,0 +1,12 @@
+"inpsb"
+{
+	"base"		"base"
+	"title"		"INPGame's Spacebuild"
+	"maps"		"^sb_"
+	"menusystem"	"1"
+	"workshopid"	"15895"
+
+	"settings"
+	{
+	}
+}
