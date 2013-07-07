@@ -1,0 +1,1 @@
+Content from SBEP packaged into SB. This is a 'lite' version of SBEP with only the core and common props and assets used.
