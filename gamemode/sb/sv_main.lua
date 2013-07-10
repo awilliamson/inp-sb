@@ -22,7 +22,16 @@ end
 -----------------------------------------------------------]]
 function GM:PlayerInitialSpawn( ply )
 
-	changeRaceClass(ply, "player_terran")
+	local rand = math.random(0,3)
+
+	if rand >= 2 then
+		changeRaceClass(ply, "player_terran")
+	elseif rand >= 1 then
+		changeRaceClass(ply, "player_radijn")
+	elseif rand >= 0 then
+		changeRaceClass(ply, "player_pendrouge")
+	end
+
 	BaseClass.PlayerInitialSpawn( self, ply )
 
 end

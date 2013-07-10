@@ -84,6 +84,10 @@ function PLAYER:ShouldDrawLocal()
 
 end
 
+function PLAYER:GetHandsModel()
+	return { model = "models/weapons/c_arms_citizen.mdl", skin = 1, body = "0000000" }
+end
+
 --
 -- Allow player class to create move
 --

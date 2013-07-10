@@ -23,7 +23,10 @@ GM.Author 	= "Inp (Radon and Sam)"
 GM.Email 	= "sb@inp.io"
 GM.Website	= "http://inp.io/"
 
+GM.class = {} -- Used to create objects of classes defined in /classes
 GM.wrappers = {} -- Populated by sh_wrappers at a later date.
+GM.constants = {} -- Populated by sh_const
+GM.util = {} -- Populated by sh_util
 
 function GM:getBaseClass()
 	return BaseClass

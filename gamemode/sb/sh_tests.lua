@@ -12,4 +12,4 @@ for k,v in pairs(f) do
 	include("../_unit/"..v)
 end
 
-luaunit.run()
+--luaunit.run()
