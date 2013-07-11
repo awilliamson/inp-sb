@@ -9,6 +9,7 @@
 
 DEFINE_BASECLASS( "gamemode_base" )
 
+local GM = GM
 local include = include
 local debug = debug
 local file = file
@@ -16,7 +17,6 @@ local include = include
 local string = string
 
 local BaseClass = BaseClass
-local GM = GM
 
 GM.Name 	= "Inp Spacebuild"
 GM.Author 	= "Inp (Radon and Sam)"
@@ -33,6 +33,12 @@ function GM:getBaseClass()
 end
 
 include("obj_player_extend.lua")
+
+--[[include("sb/sh_wrappers.lua")
+include("sb/sh_const.lua")
+include("sb/sh_util.lua")  ]]
+
+include("sb/shared.lua")
 
 include( "player_class/player_sb_base.lua" )
 include( "player_class/player_terran.lua" )

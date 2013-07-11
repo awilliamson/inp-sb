@@ -1,26 +1,27 @@
 --[[
---local dir = debug.getinfo(1).source:sub(2)
 local tbl = string.Explode("/", debug.getinfo(1).source:sub(2) )
 local currfile = table.remove(tbl)
 tbl = table.concat(tbl,"/")
 
+local exclude = {
+	"cl_init.lua"
+}
+
 local f,_ = file.Find(tbl.."/*","GAME")
 
 for k,v in pairs(f) do
-		if v:sub(0,3) == "cl_" then
-			if v ~= currfile then
-				MsgN(v)
-				include(v)
-			end
-		elseif v:sub(0,3) == "sh_" then
-			if v ~= currfile then
-				MsgN(v)
-				include(v)
-			end
+	if v:sub(0,3) == "cl_" then
+		if not exclude[v]  then
+			MsgN(v)
+			AddCSLuaFile(v)
 		end
-end          ]]
+	elseif v:sub(0,3) == "sh_" then
+		MsgN(v)
+		AddCSLuaFile(v)
+	end
+end                       ]]
 
-local include = include
+local AddCSLuaFile = AddCSLuaFile
 
 local includeTbl = {
 	"cl_fonts.lua",
@@ -30,5 +31,7 @@ local includeTbl = {
 }
 
 for _,v in pairs(includeTbl) do
-	include(v)
+	MsgN("File sent: "..v)
+	AddCSLuaFile(v)
 end
+

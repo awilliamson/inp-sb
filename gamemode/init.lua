@@ -13,13 +13,26 @@ local GM = GM
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 
--- Initialise the shared code first
+-- Send things to the client
+include("send.lua")
+
+-- Include shared
 include("shared.lua")
 
 include("sb/init.lua")
 
+--[[
+-- Initialise the shared code first
+
+include("vgui/send.lua")
+include("shared.lua")
+
+include("sb/init.lua")
+
+
 AddCSLuaFile("sb/shared.lua")
 include("sb/shared.lua")
+]]
 
 --[[
 local gamemodeDir = string.Explode("/",debug.getinfo(1).source, false)[2]
