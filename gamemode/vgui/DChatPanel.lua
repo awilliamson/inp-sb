@@ -495,4 +495,3 @@ function PANEL:PerformLayout()
 end
 
 vgui.Register('DChatPanel', PANEL, 'EditablePanel')
-MsgN("REGISTERED THE VGUI ELEMENT!")
