@@ -9,8 +9,6 @@
 
 DEFINE_BASECLASS( "gamemode_base" )
 
-require "lcs"
-
 local GM = GM
 local include = include
 local debug = debug
@@ -24,11 +22,16 @@ GM.Name 	= "Inp Spacebuild"
 GM.Author 	= "Inp (Radon and Sam)"
 GM.Email 	= "sb@inp.io"
 GM.Website	= "http://inp.io/"
+
+require "lcs"
 GM.LCS = LCS
+LCS = nil
+
 GM.class = {} -- Used to create objects of classes defined in /classes
 GM.wrappers = {} -- Populated by sh_wrappers at a later date.
 GM.constants = {} -- Populated by sh_const
 GM.util = {} -- Populated by sh_util
+GM.internal = {} -- Used for internal things like HUDs
 
 function GM:getBaseClass()
 	return BaseClass

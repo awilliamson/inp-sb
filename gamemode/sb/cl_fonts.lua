@@ -1,3 +1,5 @@
+local surface = surface
+
 surface.CreateFont( "ChatText",
 	{
 		font = "Helvetica", -- "coolvetica"
@@ -31,4 +33,11 @@ surface.CreateFont( "GModWorldtip",
 		font		= "HudHintTextSmall",
 		size		= 16,
 		weight		= 250
+	})
+
+surface.CreateFont( "SBHud",
+	{
+		font		= "Consola Mono",
+		size		= 14,
+		weight		= 400
 	})
