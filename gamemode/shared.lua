@@ -46,7 +46,7 @@ include("sb/sh_util.lua")  ]]
 include("sb/shared.lua")
 include("classes/class.lua")
 
-include( "player_class/player_sb_base.lua" )
+include( "player_class/player_base.lua" )
 include( "player_class/player_terran.lua" )
 include( "player_class/player_radijn.lua" )
 include( "player_class/player_pendrouge.lua" )

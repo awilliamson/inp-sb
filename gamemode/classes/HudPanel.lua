@@ -161,7 +161,7 @@ function C:updateChildren(dx, dy)
 	if not dx or not dy then return end
 
 	for _, c in pairs( self:getChildren() ) do
-		c:setPos( c:getX() + dx, c:getY() + dy)
+		c:setPos( c:getX() + dx, c:getY() + dy )
 	end
 	return
 end
@@ -176,12 +176,13 @@ function C:calcSize()
 		return self:getWidth(), self:getHeight()
 	else
 		for _,v in pairs( self:getChildren() ) do
-
-			if v:getWidth() + v:getXOff() > wn then
-				wn = v:getWidth() + v:getXOff() + self:getPaddingX()
-			end
-			if v:getHeight() + v:getYOff() > hn then
-				hn = v:getHeight() + v:getYOff() + self:getPaddingY()
+			if v:isVisible() then
+				if v:getWidth() + v:getXOff() > wn then
+					wn = v:getWidth() + v:getXOff() + self:getPaddingX()
+				end
+				if v:getHeight() + v:getYOff() > hn then
+					hn = v:getHeight() + v:getYOff() + self:getPaddingY()
+				end
 			end
 		end
 

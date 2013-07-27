@@ -277,16 +277,18 @@ function C:render()
 
 	-- Think will be called from the top Super class' render func.
 	-- This will end up setting the radius for us as defined above
+	if self:isVisible() then
+		renderBackgroundCircle(self) -- Background circle first
 
-	renderBackgroundCircle(self) -- Background circle first
+		if self:isFill() then -- Check what type of indicator we want. Whether we want it to fill from top -> value or just have a segment filled near the value
+			renderFillIndicator(self)
+		else
+			renderNonFillIndicator(self)
+		end
 
-	if self:isFill() then -- Check what type of indicator we want. Whether we want it to fill from top -> value or just have a segment filled near the value
-		renderFillIndicator(self)
-	else
-		renderNonFillIndicator(self)
+		renderCoverCircle(self) -- Center cover circle to hide things
 	end
 
-	renderCoverCircle(self) -- Center cover circle to hide things
 end
 
 GM.class.registerClass("HudRadialIndicator", C)

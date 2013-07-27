@@ -31,14 +31,48 @@ end
 -------------------------
 --------------------------
 -------------------------
+
+-- Locals for the panels so we can reference them throughout cl_hud
 local generated = false
-local healthPanel, health, health_txt, armor, armor_txt
-local secClock, minClock, hrClock, fpsInd
+
+local healthPanel, health, health_txt, armor, armor_txt -- Health Panel & Children
+local secClock, minClock, hrClock, fpsInd -- Clock & FPS
+local ammoPanel, ammo, ammo_txt, alt -- Ammo Panel & Children
+
+local wepTable = {}
+
+local function calcAmmo()
+
+	local ammo, maxAmmo, secondaryAmmo
+	local wep = LocalPlayer():GetActiveWeapon()
+
+	if wep:IsValid() then
+		ammo = wep:Clip1()
+
+		if ammo and ammo > 0 then
+
+			-- Add Wep max ammo if it doesn't exist. Otherwise update ammo amount if we have something bigger
+			if not wepTable[ wep:GetClass() ] or ammo > wepTable[ wep:GetClass() ] then
+				wepTable[ wep:GetClass() ] = ammo
+			end
+
+			maxAmmo = wepTable[ wep:GetClass() ]
+
+			secondaryAmmo = wep:GetSecondaryAmmoType() and LocalPlayer():GetAmmoCount( wep:GetSecondaryAmmoType()) or 0
+		end
+	end
+
+	return ammo, maxAmmo, secondaryAmmo
+end
 
 local function genComponents()
 	if not generated then
 
-		healthPanel = GM.class.getClass("HudPanel"):new( 200, 100,500,500,Color(50,50,50,150), true)
+		---
+		--- Health Panel - Bottom Left
+		---
+
+		healthPanel = GM.class.getClass("HudPanel"):new( 0, 0, 0, 0, Color(50,50,50,150), true)
 		healthPanel:setPadding(10,10)
 
 		local think = healthPanel.think
@@ -46,7 +80,6 @@ local function genComponents()
 			think(self)
 
 			self:setPos( 30, ScrH() - 30 - self:getHeight())
-
 		end
 
 		health = GM.class.getClass("HudBarIndicator"):new(0,0,120,10,0,100,Color(255,255,255,255),Color(255,255,255,20))
@@ -87,8 +120,13 @@ local function genComponents()
 
 		healthPanel:addChild(health):addChild(health_txt):addChild(armor):addChild(armor_txt)
 
+
 		---
-		--- Below is the top panel area for the clock and FPS meter
+		--- End of HealthPanel
+		---
+
+		---
+		--- Clock & FPS - Top
 		---
 
 		-- Seconds
@@ -140,9 +178,70 @@ local function genComponents()
 			end
 			think(self)
 		end
-
 		---
 		--- End of FPS & Clock
+		---
+
+		---
+		--- Ammo Panel - Bottom Right
+		---
+
+		ammoPanel = GM.class.getClass("HudPanel"):new( 0, 0, 0, 0, Color(50,50,50,150), true)
+		ammoPanel:setPadding(10,10)
+
+		local think = ammoPanel.think
+		ammoPanel.think = function(self)
+			think(self)
+
+			self:setPos( ScrW() - 30 - self:getWidth(), ScrH() - 30 - self:getHeight() )
+
+			local ammo, maxAmmo, _ = calcAmmo()
+			if ammo and ammo >= 0 and maxAmmo and maxAmmo > 0 then
+				self:setVisible(true)
+			else
+				self:setVisible(false)
+			end
+
+		end
+
+		ammo = GM.class.getClass("HudBarIndicator"):new(0,0,120,10,0,100,Color(255,255,255,255),Color(255,255,255,20))
+		ammo_txt = GM.class.getClass("TextElement"):new(ammo:getX(), ammo:getY() + ammo:getHeight(), Color(255,255,255,255), "Ammo")
+		ammo:setSmoothFactor(0.3)
+
+		local think = ammo.think
+		ammo.think = function(self)
+			local ammo, maxAmmo, _ = calcAmmo()
+
+			if ammo and ammo > 0 and maxAmmo and maxAmmo > 0 then
+				self:setMaxValue( maxAmmo )
+				self:setTarget( ammo )
+			end
+
+			think(self)
+		end
+
+		local think = ammo_txt.think
+		ammo_txt.think = function(self)
+			think(self)
+
+			local ammo, maxAmmo, _ = calcAmmo()
+			self:setText( string.format("Ammo: %s/%s", ammo, maxAmmo) )
+		end
+
+		alt = GM.class.getClass("TextElement"):new(ammo_txt:getX(), ammo_txt:getY() + ammo_txt:getHeight(), Color(255,255,255,255), "Alt")
+
+		local think = alt.think
+		alt.think = function(self)
+			think(self)
+
+			local _, _, secondaryAmmo = calcAmmo()
+			self:setText( string.format("Alt: %s", secondaryAmmo ) )
+		end
+
+		ammoPanel:addChild(ammo):addChild(ammo_txt):addChild(alt)
+
+		---
+		---	End of Ammo Panel
 		---
 
 		---
@@ -163,17 +262,21 @@ end
 function GM:HUDPaint()
 	genComponents()
 
-	-- HealthPanel
-	healthPanel:render()
+	if LocalPlayer():Alive() then
+		-- HealthPanel
+		healthPanel:render()
 
-	-- Clock [ ORDER IMPORTANT ]
-	secClock:render()
-	minClock:render()
-	hrClock:render()
+		-- AmmoPanel
+		ammoPanel:render()
 
-	-- FPS meter
-	fpsInd:render()
+		-- Clock [ ORDER IMPORTANT ]
+		secClock:render()
+		minClock:render()
+		hrClock:render()
 
+		-- FPS meter
+		fpsInd:render()
+	end
 
 end
 
