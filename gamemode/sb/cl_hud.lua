@@ -7,7 +7,7 @@ local internal = GM.internal
 internal.hud = {}
 
 function GM:registerHUDComponent(name, component)
-	if not component.is_A or not component:is_A("HudComponent") then error("Component is not a HudComponent. Failed to register, "..name) return end
+	if not component.is_A or not component:is_A( GM.class.getClass("HudComponent") ) then error("Component is not a HudComponent. Failed to register, "..name) return end
 	internal.hud[name] = component
 end
 
