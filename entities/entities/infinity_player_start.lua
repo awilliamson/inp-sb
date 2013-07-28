@@ -13,9 +13,9 @@ ENT.Race = "0"
 		2 : "Radijn"
 		3 : "Terran"
 ]]--
---VALUE IS GURANTEED TO BE A STRING
-function ENT:KeyValue( key, value )	
-	print(key)
+--VALUE IS GUARANTEED TO BE A STRING
+
+function ENT:KeyValue( key, value )
 	if ( key == "Race" ) then
 		if (value == "1") then 
 			self.Race = "Pendrouge"
@@ -25,7 +25,6 @@ function ENT:KeyValue( key, value )
 			self.Race = "Terran"
 		else
 			self.Race = value
-			print(type(value))
 		end
 	elseif ( key == "Disable" ) then
 		self.Disable = value
@@ -34,5 +33,5 @@ end
 
 
 function ENT:Initialize() 
-	print("Hello World from Player Start`")
+	print("Hello World from Player Start")
 end

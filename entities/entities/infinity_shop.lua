@@ -24,7 +24,7 @@ function ENT:KeyValue( key, value )
 	end
 end
 
-function ENT:Touch( ent )
+function ENT:StartTouch( ent )
 	if(ent:IsPlayer()) then
 		if(ent:getRace() == self.Race) then
 			print("Touched by Player matching Race")

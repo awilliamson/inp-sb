@@ -49,17 +49,16 @@ local function calcAmmo()
 	if wep:IsValid() then
 		ammo = wep:Clip1()
 
-		if ammo and ammo > 0 then
+		if ammo ~= nil and ammo > 0 then
 
 			-- Add Wep max ammo if it doesn't exist. Otherwise update ammo amount if we have something bigger
 			if not wepTable[ wep:GetClass() ] or ammo > wepTable[ wep:GetClass() ] then
-				wepTable[ wep:GetClass() ] = ammo
+				wepTable[ wep:GetClass() ] = ammo or 0
 			end
-
-			maxAmmo = wepTable[ wep:GetClass() ]
-
-			secondaryAmmo = wep:GetSecondaryAmmoType() and LocalPlayer():GetAmmoCount( wep:GetSecondaryAmmoType()) or 0
 		end
+
+		secondaryAmmo = wep:GetSecondaryAmmoType() and LocalPlayer():GetAmmoCount( wep:GetSecondaryAmmoType()) or 0
+		maxAmmo = wepTable[ wep:GetClass() ]
 	end
 
 	return ammo, maxAmmo, secondaryAmmo
@@ -196,7 +195,7 @@ local function genComponents()
 			self:setPos( ScrW() - 30 - self:getWidth(), ScrH() - 30 - self:getHeight() )
 
 			local ammo, maxAmmo, _ = calcAmmo()
-			if ammo and ammo >= 0 and maxAmmo and maxAmmo > 0 then
+			if ammo and maxAmmo and maxAmmo > 0 then
 				self:setVisible(true)
 			else
 				self:setVisible(false)
@@ -212,7 +211,7 @@ local function genComponents()
 		ammo.think = function(self)
 			local ammo, maxAmmo, _ = calcAmmo()
 
-			if ammo and ammo > 0 and maxAmmo and maxAmmo > 0 then
+			if ammo and ammo >= 0 and maxAmmo and maxAmmo > 0 then
 				self:setMaxValue( maxAmmo )
 				self:setTarget( ammo )
 			end
@@ -239,7 +238,6 @@ local function genComponents()
 		end
 
 		ammoPanel:addChild(ammo):addChild(ammo_txt):addChild(alt)
-
 		---
 		---	End of Ammo Panel
 		---
@@ -250,7 +248,6 @@ local function genComponents()
 
 		GM:registerHUDComponent("HealthPanel", healthPanel) -- Optional, allows external lua scripts to call up the HUD elements for hooking etc
 		-- Don't bother with clock as it's not in a frame, and won't be used for anything other than defined here.
-
 		---
 		--- End Component Registration
 		---
