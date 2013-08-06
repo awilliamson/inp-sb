@@ -51,9 +51,6 @@ function ENT:StopTouch( ent )
 	end
 end
 
---Net Library Messages
-util.AddNetworkString("INPSpacebuild-Shop:StartTouch")
-util.AddNetworkString("INPSpacebuild-Shop:StopTouch")
 
 if(CLIENT) then
 
