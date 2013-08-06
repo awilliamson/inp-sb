@@ -1,3 +1,10 @@
+
+NetString = 
+{
+	"INPSpacebuild-Shop:StartTouch",
+	"INPSpacebuild-Shop:StopTouch"
+}
+
 --[[
 local tbl = string.Explode("/", debug.getinfo(1).source:sub(2) )
 local currfile = table.remove(tbl)
@@ -26,6 +33,8 @@ for _,v in pairs(includeTbl) do
 	include(v)
 end
 
-
+for _, v in pairs(NetString) do
+	util.AddNetworkString(v)
+end
 
 
