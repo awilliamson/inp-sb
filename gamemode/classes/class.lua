@@ -30,7 +30,8 @@ local function includeClass(name)
 
 	local p = checkClass(name)
 	if p ~= false then
-		include("../"..p.."/"..name..".lua")
+		include(name..".lua")--"../"..p.."/"..name..".lua")
+		print("Included: "..name..".lua")
 	end
 
 end
@@ -71,10 +72,14 @@ function class.registerPath( path )
 end
 
 function class.getClass( name )
-	if class.isLoaded(name) then return loadedClasses[name] end
+	return class.isLoaded( name )
 end
 
 -- Do some preloading first to get them in the table and all ready to go before they're ever called.
+class.new("Resource")
+class.new("Environment")
+class.new("Celestial")
+
 class.new("HudComponent")
 class.new("HudPanel")
 class.new("HudBarIndicator")

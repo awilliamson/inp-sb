@@ -1,10 +1,18 @@
--- Send classes
 local AddCSLuaFile = AddCSLuaFile
 
-AddCSLuaFile("class.lua")
+local includeTbl = {
+	"class.lua",
+	"Celestial.lua",
+	"Environment.lua",
+	"Resource.lua",
+	"HudComponent.lua",
+	"HudPanel.lua",
+	"HudBarIndicator.lua",
+	"TextElement.lua",
+	"HudRadialIndicator.lua"
+}
 
-AddCSLuaFile("HudComponent.lua")
-AddCSLuaFile("HudPanel.lua")
-AddCSLuaFile("HudBarIndicator.lua")
-AddCSLuaFile("TextElement.lua")
-AddCSLuaFile("HudRadialIndicator.lua")
+for _,v in pairs(includeTbl) do
+	MsgN("File sent: "..v)
+	AddCSLuaFile(v)
+end

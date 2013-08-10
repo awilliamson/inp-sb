@@ -39,10 +39,6 @@ end
 
 include("obj_player_extend.lua")
 
---[[include("sb/sh_wrappers.lua")
-include("sb/sh_const.lua")
-include("sb/sh_util.lua")  ]]
-
 include("sb/shared.lua")
 include("classes/class.lua")
 

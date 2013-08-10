@@ -1,11 +1,13 @@
-local tbl = string.Explode("/", debug.getinfo(1).source:sub(2) )
-local currfile = table.remove(tbl)
-tbl = table.concat(tbl,"/")
+local include = include
 
-local f,_ = file.Find(tbl.."/*","GAME")
+local includeTbl = {
+	"sh_const.lua",
+	"sh_util.lua",
+	"sh_wrappers.lua"
+	-- Put tests here afterwards
+}
 
-for k,v in pairs(f) do
-	if v:sub(0,3) == "sh_" then
-		include(v)
-	end
+for _,v in pairs(includeTbl) do
+	MsgN("File included: "..v)
+	include(v)
 end
