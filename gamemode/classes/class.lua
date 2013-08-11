@@ -76,9 +76,6 @@ function class.getClass( name )
 end
 
 -- Do some preloading first to get them in the table and all ready to go before they're ever called.
-class.new("Resource")
-class.new("Environment")
-class.new("Celestial")
 
 class.new("HudComponent")
 class.new("HudPanel")

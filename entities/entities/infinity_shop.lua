@@ -1,5 +1,6 @@
 --INP Spacebuild - Shop
 --Brush type
+AddCSLuaFile()
 ENT.Type = "brush"
 
 local net = net
@@ -9,7 +10,7 @@ local net = net
 		2 : "Terran"
 		3 : "Neutral"
 ]]--
-
+if(SERVER) then
 --Key: String containing the Key.
 --Value: String containing a number (oh joy)
 function ENT:KeyValue( key, value )	
@@ -31,37 +32,36 @@ end
 
 function ENT:StartTouch( ent )
 	if(ent:IsPlayer()) then
-		if(ent:getRace() == self.Race) then
-			--Race matches, They can access the store
-			net.Start("INPSpacebuild-Shop:StartTouch")
-			net.WriteString( self.Race )
-			net.Send(ent)
-		end
+		--Race matches, They can access the store
+		net.Start("INPSpacebuild-Shop:StartTouch")
+		net.WriteString( self.Race )
+		
+		net.Send(ent)
 	end
 end
 
-function ENT:StopTouch( ent )
+function ENT:EndTouch( ent )
+	
 	if(ent:IsPlayer()) then
-		if(ent:getRace() == self.Race) then
-			--Race matches, They can access the store
-			net.Start( "INPSpacebuild-Shop:StopTouch" )
-			net.WriteString( self.Race )
-			net.Send(ent)
-		end
+		
+		--Race matches, They can access the store
+		net.Start( "INPSpacebuild-Shop:StopTouch" )
+		net.WriteString( self.Race )
+		net.Send(ent)
 	end
 end
+end
 
+if(CLIENT) then 
 
-if(CLIENT) then
-
-net.Recieve( "INPSpacebuild-Shop:StartTouch", function( length, client )
+net.Receive( "INPSpacebuild-Shop:StartTouch", function ( length, pl )
 	local ShopRace = net.ReadString()
-	print("We can shop at shoptype: " + ShopRace)
+	print("We can shop at shoptype: " .. ShopRace)
 end)
 
-net.Recieve( "INPSpacebuild-Shop:StopTouch", function( length, client )
-	local ShopRace = net.ReadString()
-	print("We are no longer at " + ShopRace)
-end)
 
+net.Receive( "INPSpacebuild-Shop:StopTouch", function( length, pl )
+	local ShopRace = net.ReadString()
+	print("We are no longer at " .. ShopRace)
+end)
 end
