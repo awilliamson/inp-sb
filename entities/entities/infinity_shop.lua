@@ -1,17 +1,23 @@
-
+--INP Spacebuild - Shop
+--Brush type
+AddCSLuaFile()
 ENT.Type = "brush"
 
+local net = net
 --[[
 		0 : "Pendrouge"
 		1 : "Radijn"
 		2 : "Terran"
 		3 : "Neutral"
 ]]--
---Value is a string
+if(SERVER) then
+--Key: String containing the Key.
+--Value: String containing a number (oh joy)
 function ENT:KeyValue( key, value )	
 	if ( key == "Race" ) then
+	--These need confirmation with Ash's update of FGDS
 		if (value == "1") then 
-			self.Race = "Pendrouge"
+			self.Race = "Pendrouge" 
 		elseif (value == "2") then
 			self.Race =  "Radijn"
 		elseif (value == "3") then
@@ -26,17 +32,36 @@ end
 
 function ENT:StartTouch( ent )
 	if(ent:IsPlayer()) then
-		if(ent:getRace() == self.Race) then
-			print("Touched by Player matching Race")
-		else
-			print("Touched by Player")
-		end
+		--Race matches, They can access the store
+		net.Start("INPSpacebuild-Shop:StartTouch")
+		net.WriteString( self.Race )
+		
+		net.Send(ent)
 	end
 end
 
-function ENT:Initialize() 
-	print("Hello World from Shop with Race: "..self.Race)
+function ENT:EndTouch( ent )
+	
+	if(ent:IsPlayer()) then
+		
+		--Race matches, They can access the store
+		net.Start( "INPSpacebuild-Shop:StopTouch" )
+		net.WriteString( self.Race )
+		net.Send(ent)
+	end
+end
 end
 
+if(CLIENT) then 
+
+net.Receive( "INPSpacebuild-Shop:StartTouch", function ( length, pl )
+	local ShopRace = net.ReadString()
+	print("We can shop at shoptype: " .. ShopRace)
+end)
 
 
+net.Receive( "INPSpacebuild-Shop:StopTouch", function( length, pl )
+	local ShopRace = net.ReadString()
+	print("We are no longer at " .. ShopRace)
+end)
+end
