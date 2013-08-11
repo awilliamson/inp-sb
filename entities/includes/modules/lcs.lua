@@ -20,6 +20,7 @@ freely, subject to the following restrictions:
     distribution.
 --]]
 
+AddCSLuaFile()
 
 local pairs,ipairs = pairs,ipairs
 local assert = assert
