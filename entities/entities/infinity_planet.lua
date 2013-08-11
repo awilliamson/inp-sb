@@ -12,14 +12,35 @@ ENT.celestial = nil -- This refers to what will be the parent object which house
 ENT.Spawnable = false
 ENT.AdminOnly = false
 
+
+
+function genMesh(r)
+	if(type(r) == "number") then
+		--Icosphere of R radius
+		local Mesh = {}
+		
+		return Mesh
+	else
+		--Unit Icosphere
+		local Mesh = {}
+		
+		
+		
+		return Mesh
+	
+	end
+end
+
+
+
+
 function ENT:Initialize()
 	if SERVER then
 
-		self:SetModel("models/props_lab/huladoll.mdl")
+		self:SetModel("models/props_lab/huladoll.mdl")	
 		self:SetMoveType( MOVETYPE_NONE ) -- We don't want these planets to move
 		self:SetSolid( SOLID_NONE ) -- We want people to be able to pass through it...
-		self:PhysicsInitSphere( 1 ) -- Create a standard physics sphere
-		self:SetCollisionBounds( Vector(-1,-1,-1), Vector(1,1,1) )
+		self:PhysicsFromMesh(
 		self:SetTrigger( true )
 		self:GetPhysicsObject():EnableMotion( false ) -- DON'T MOVE!
 		self:DrawShadow( false ) -- That would be bad.
@@ -66,9 +87,9 @@ end
 
 if CLIENT then
 
-	function ENT:Draw()
+	--function ENT:Draw()
 	    -- Ensure the client doesn't see the huladoll
-	end
+	--end
 
 end
 

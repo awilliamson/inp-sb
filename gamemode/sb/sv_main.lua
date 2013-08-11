@@ -149,6 +149,7 @@ local function spawnEnvironments( list )
 			ent:Spawn()
 
 			local r = v[2]
+			--TODO Replace with matrix Transformation
 			ent:PhysicsInitSphere(r)
 			ent:SetCollisionBounds( Vector(-r,-r,-r), Vector(r,r,r) )
 
