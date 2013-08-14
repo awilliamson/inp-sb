@@ -86,7 +86,6 @@ end
 local function CreateChatGUI()
 	if not ChatVGUI then
 		ChatVGUI = vgui.Create( "DPanel" )
-		//ChatVGUI:SetTitle( "" )
 		ChatVGUI:SetPos( 39, ScrH() - 335 - (ScrH()*0.05) )
 		ChatVGUI:SetSize( ScrW() * .5 - 19, 200+(ScrH()*0.05) )
 		ChatVGUI:SetBGColor( Color( 70, 70, 70, 110 ) )
@@ -119,7 +118,6 @@ local function CreateChatGUI()
 		ChatVGUI.ChatTextEntry.OnEnter = function()
 			if(ChatVGUI.ChatTextEntry) then
 				if( string.gsub( ChatVGUI.ChatTextEntry:GetValue(), " ", "" ) ~= "" ) then
-					print("sending crap: "..ChatVGUI.ChatTextEntry:GetValue())
 					net.Start("PlayerSay")
 					net.WriteString(ChatVGUI.ChatTextEntry:GetValue())
 					net.WriteBit(ChatVGUI.ChatTextEntry.IsTeam)

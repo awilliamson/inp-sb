@@ -42,7 +42,7 @@ end
 
 net.Receive("PlayerSay", function(len, ply)
 	local str = net.ReadString()
-	local isTeam = net.ReadBit()
+	local isTeam = (net.ReadBit() == 1)
 	local say = hook.Run("PlayerSay", ply, str, isTeam)
 	
 	if string.len(say) > 0 then
