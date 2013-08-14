@@ -86,10 +86,10 @@ end
 local function CreateChatGUI()
 	if not ChatVGUI then
 		ChatVGUI = vgui.Create( "DPanel" )
-		ChatVGUI:SetTitle( "" )
+		//ChatVGUI:SetTitle( "" )
 		ChatVGUI:SetPos( 39, ScrH() - 335 - (ScrH()*0.05) )
 		ChatVGUI:SetSize( ScrW() * .5 - 19, 200+(ScrH()*0.05) )
-		ChatVGUI:SetColor( Color( 70, 70, 70, 110 ) )
+		ChatVGUI:SetBGColor( Color( 70, 70, 70, 110 ) )
 		ChatVGUI:SetVisible( false )
 		ChatVGUI.Bodies = {}
 
@@ -119,13 +119,14 @@ local function CreateChatGUI()
 		ChatVGUI.ChatTextEntry.OnEnter = function()
 			if(ChatVGUI.ChatTextEntry) then
 				if( string.gsub( ChatVGUI.ChatTextEntry:GetValue(), " ", "" ) ~= "" ) then
+					print("sending crap: "..ChatVGUI.ChatTextEntry:GetValue())
 					net.Start("PlayerSay")
 					net.WriteString(ChatVGUI.ChatTextEntry:GetValue())
-					net.WriteBool(ChatVGUI.ChatTextEntry.IsTeam)
+					net.WriteBit(ChatVGUI.ChatTextEntry.IsTeam)
 					net.SendToServer()
 				end
 				
-				ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[setScrollbar(0)]])
+				ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'hidden';]])
 				ChatVGUI.ChatTextEntry:SetText( "" )
 				ChatVGUI:SetVisible( false )
 				
@@ -148,7 +149,7 @@ local function msgCreateChatVGUI(isTeam)
 	if not ChatVGUI then CreateChatGUI() end
 	
 	ChatVGUI:SetVisible(true)
-	ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[setScrollbar(1)]])
+	ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'auto';]])
 	ChatVGUI.ChatTextEntry.IsTeam = isTeam or false
 	ChatVGUI.ChatTextEntry:MakePopup()
 	
@@ -162,7 +163,7 @@ local function OpenChat(ply, bind, pressed)
 		
 			if bind == "messagemode2" then
 				isTeam = true
-			else
+			end
 			
             if not hook.Run("StartChat", isTeam) then 
 				msgCreateChatVGUI(isTeam)
@@ -225,7 +226,7 @@ function chat.AddText(...)
 	oldaddtext(...)
 end
 
-net.Receive( "AddToChatBox", function() 
+net.Receive( "AddToChatBox", function()
 	if( not ChatVGUI ) then return end
 	
 	local tab = net.ReadString()
