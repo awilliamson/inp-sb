@@ -6,10 +6,47 @@ end
 local ChatVGUI = nil
 local ChosenChatLevel = "ALL"
 local NumberOfBodies = 0
+
+//<link rel="stylesheet" type="text/css" href="https://diaspora-chat-link-code.googlecode.com/svn/trunk/styles.css">
 local HtmlTemplate = [[
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="https://diaspora-chat-link-code.googlecode.com/svn/trunk/styles.css">
+		<style type="text/css">
+			#messages {
+				padding: 5px;
+				width: 95%;
+				padding-bottom: 0px;
+			}
+			#bottom_bar {
+				position: static;
+				bottom: 0px;
+				width: 96%;
+				height: 10px;
+			}
+			.message {
+				padding: 1px;
+			}
+			.username 
+			{
+				text-decoration: none;
+			}
+			html
+			{
+				margin-top: 20px;
+				color:white;
+				font-family:'Verdana';
+				font-size:14px;
+				padding-bottom:20px;
+				font-weight:700;
+				text-decoration: none;
+
+				overflow: hidden;
+			}
+			div
+			{
+				display:break-word;
+			}
+		</style>
 	</head>
 		<body>
 		<div id="messages"></div>
