@@ -1,13 +1,6 @@
-if ChatVGUI then
-	ChatVGUI:SetVisible(false)
-	for i,k in pairs(ChatVGUI.Bodies) do k:SetVisible(false) end
-end
-
 local ChatVGUI = nil
 local ChosenChatLevel = "ALL"
 local NumberOfBodies = 0
-
-//<link rel="stylesheet" type="text/css" href="https://diaspora-chat-link-code.googlecode.com/svn/trunk/styles.css">
 local HtmlTemplate = [[
 <html>
 	<head>
@@ -121,53 +114,51 @@ local function AddChatBody(name)
 end
 
 local function CreateChatGUI()
-	if not ChatVGUI then
-		ChatVGUI = vgui.Create( "DPanel" )
-		ChatVGUI:SetPos( 39, ScrH() - 335 - (ScrH()*0.05) )
-		ChatVGUI:SetSize( ScrW() * .5 - 19, 200+(ScrH()*0.05) )
-		ChatVGUI:SetBGColor( Color( 70, 70, 70, 110 ) )
-		ChatVGUI:SetVisible( false )
-		ChatVGUI.Bodies = {}
+	ChatVGUI = vgui.Create( "DPanel" )
+	ChatVGUI:SetPos( 39, ScrH() - 335 - (ScrH()*0.05) )
+	ChatVGUI:SetSize( ScrW() * .5 - 19, 200+(ScrH()*0.05) )
+	ChatVGUI:SetBGColor( Color( 70, 70, 70, 110 ) )
+	ChatVGUI:SetVisible( false )
+	ChatVGUI.Bodies = {}
 
-		local cx, cy = ChatVGUI:GetPos()
-		
-		AddChatBody("ALL")
-		AddChatBody("TEAM")
-		
-		ChatVGUI.Bodies["ALL"]:SetVisible(true)
-		
-		ChatVGUI.CloseLink = vgui.Create( "DButton", ChatVGUI )
-		ChatVGUI.CloseLink:SetPos( ScrW() * .5 - 35, 2 )
-		ChatVGUI.CloseLink:SetText( "X" )
-		ChatVGUI.CloseLink:SetSize(15,15)
-		ChatVGUI.CloseLink:SetVisible( true )
-		ChatVGUI.CloseLink.DoClick = function() ChatVGUI:SetVisible( false ) gui.EnableScreenClicker( false ) end
-		
+	local cx, cy = ChatVGUI:GetPos()
+	
+	AddChatBody("ALL")
+	AddChatBody("TEAM")
+	
+	ChatVGUI.Bodies["ALL"]:SetVisible(true)
+	
+	ChatVGUI.CloseLink = vgui.Create( "DButton", ChatVGUI )
+	ChatVGUI.CloseLink:SetPos( ScrW() * .5 - 35, 2 )
+	ChatVGUI.CloseLink:SetText( "X" )
+	ChatVGUI.CloseLink:SetSize(15,15)
+	ChatVGUI.CloseLink:SetVisible( true )
+	ChatVGUI.CloseLink.DoClick = function() ChatVGUI:SetVisible( false ) gui.EnableScreenClicker( false ) end
+	
 
-		local tx, ty = ChatVGUI:GetPos()
-		ChatVGUI.ChatTextEntry = vgui.Create( "DTextEntry", ChatVGUI )
-		ChatVGUI.ChatTextEntry:SetPos( tx + 5, ty + 180 + (ScrH()*0.05) )
-		ChatVGUI.ChatTextEntry:SetSize( ScrW() * .5 - 50, 15 )
-		ChatVGUI.ChatTextEntry:SetVisible( true )
-		ChatVGUI.ChatTextEntry:SetEnabled( true )
-		ChatVGUI.ChatTextEntry:SetKeyboardInputEnabled( true )
-		ChatVGUI.ChatTextEntry:SetMouseInputEnabled( true )
-		ChatVGUI.ChatTextEntry.OnEnter = function()
-			if(ChatVGUI.ChatTextEntry) then
-				if( string.gsub( ChatVGUI.ChatTextEntry:GetValue(), " ", "" ) ~= "" ) then
-					net.Start("PlayerSay")
-					net.WriteString(ChatVGUI.ChatTextEntry:GetValue())
-					net.WriteBit(ChatVGUI.ChatTextEntry.IsTeam)
-					net.SendToServer()
-				end
-				
-				ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'hidden';]])
-				ChatVGUI.ChatTextEntry:SetText( "" )
-				ChatVGUI:SetVisible( false )
-				
-				gui.EnableScreenClicker( false )
-				hook.Run("FinishChat")
+	local tx, ty = ChatVGUI:GetPos()
+	ChatVGUI.ChatTextEntry = vgui.Create( "DTextEntry", ChatVGUI )
+	ChatVGUI.ChatTextEntry:SetPos( tx + 5, ty + 180 + (ScrH()*0.05) )
+	ChatVGUI.ChatTextEntry:SetSize( ScrW() * .5 - 50, 15 )
+	ChatVGUI.ChatTextEntry:SetVisible( true )
+	ChatVGUI.ChatTextEntry:SetEnabled( true )
+	ChatVGUI.ChatTextEntry:SetKeyboardInputEnabled( true )
+	ChatVGUI.ChatTextEntry:SetMouseInputEnabled( true )
+	ChatVGUI.ChatTextEntry.OnEnter = function()
+		if(ChatVGUI.ChatTextEntry) then
+			if( string.gsub( ChatVGUI.ChatTextEntry:GetValue(), " ", "" ) ~= "" ) then
+				net.Start("PlayerSay")
+				net.WriteString(ChatVGUI.ChatTextEntry:GetValue())
+				net.WriteBit(ChatVGUI.ChatTextEntry.IsTeam)
+				net.SendToServer()
 			end
+			
+			ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'hidden';]])
+			ChatVGUI.ChatTextEntry:SetText( "" )
+			ChatVGUI:SetVisible( false )
+			
+			gui.EnableScreenClicker( false )
+			hook.Run("FinishChat")
 		end
 	end
 end
@@ -193,7 +184,7 @@ end
 
 local function OpenChat(ply, bind, pressed)
     if (ply == LocalPlayer()) then
-        if (bind == "messagemode" or bind == "messagemode2") and pressed then //messagemode, they're opening chat 
+        if (bind == "messagemode" or bind == "messagemode2") and pressed then -- messagemode, they're opening chat 
 			local isTeam = false
 		
 			if bind == "messagemode2" then
@@ -208,7 +199,7 @@ local function OpenChat(ply, bind, pressed)
         end
     end
 end
-hook.Add("PlayerBindPress","ChatBind",OpenChat) //Check binds
+hook.Add("PlayerBindPress","ChatBind",OpenChat) -- Check binds
 
 function chat.AddText2(tab, ...)
 	local body = ChatVGUI.Bodies[tab]
