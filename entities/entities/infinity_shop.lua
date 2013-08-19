@@ -1,7 +1,7 @@
 --INP Spacebuild - Shop
 --Brush type
 AddCSLuaFile()
-ENT.Type = "brush"
+if(SERVER) then ENT.Type = "brush" end
 
 local net = net
 --[[
