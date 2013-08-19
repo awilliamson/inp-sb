@@ -28,6 +28,7 @@ GM.LCS = LCS
 LCS = nil
 
 GM.class = {} -- Used to create objects of classes defined in /classes
+GM.convars = {} -- Used to store convars which will be used to configure spacebuild
 GM.wrappers = {} -- Populated by sh_wrappers at a later date.
 GM.constants = {} -- Populated by sh_const
 GM.util = {} -- Populated by sh_util

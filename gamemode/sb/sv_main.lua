@@ -1,4 +1,5 @@
 local GM = GM
+local convars = GM.convars
 local player_manager = player_manager
 local BaseClass = GM:getBaseClass()
 
@@ -56,6 +57,21 @@ function GM:PlayerSpawn( ply )
 	
 	--Set player model with the hook
 	hook.Call( "PlayerSetModel", GAMEMODE, ply )
+end
+
+function GM:PlayerNoClip()
+	return GM.convars.noclip:get()
+end
+
+function GM:OnReloaded()
+
+end
+
+--[[---------------------------------------------------------
+--	Used to confirm validity of a SB entity
+ ]]
+function GM:isValid( ent )
+	return IsValid( ent ) and not ent:IsWorld() and IsValid(ent:GetPhysicsObject()) and not (ent.isNoGrav and ent:isNoGrav())
 end
 
 ---
@@ -141,7 +157,9 @@ local function spawnEnvironments( list )
 		if v[1] == "planet" or v[1] == "planet2" then
 			if v[1] == "planet2" then v[6] = v[7] end -- Override night temp as norm temp
 			local obj = GM.class.getClass("Celestial"):new()
-			local env = GM.class.getClass("Environment"):new( v[3], v[6], v[4] ) --grav,temp,atmos, resources
+
+			local env = GM.class.getClass("Environment"):new( v[3], v[6], v[4], v[2], nil, (v[1] == "planet2" and v[13] or "") ) --grav,temp,atmos, radius, resources, name
+			obj:setEnvironment(env) -- Bind Environment IMMEDIATELY!
 
 			local ent = ents.Create("infinity_planet")
 			ent:SetPos( v.ent:GetPos())
@@ -152,9 +170,7 @@ local function spawnEnvironments( list )
 			ent:PhysicsInitSphere(r)
 			ent:SetCollisionBounds( Vector(-r,-r,-r), Vector(r,r,r) )
 
-			-- Create an environment, bind the entity to the environment obj?
-			obj:setEnvironment(env)
-			obj:setEntity(ent)
+			obj:setEntity(ent) -- Bind the entity to the celestial
 
 			print(obj)
 
@@ -185,4 +201,29 @@ function GM:InitPostEntity()
 	spawnEnvironments( env_data )
 
 	print("We've finished that bollocks")
+end
+
+function GM:OnEnterEnvironment(env, ent)
+	if env:getName() ~= "" then
+		print(ent, "Entering: ",env:getName(),"\n")
+	end
+end
+
+function GM:OnLeaveEnvironment(env, ent)
+	if env:getName() ~= "" then
+		print(ent, "Leaving: ",env:getName(),"\n")
+	end
+end
+
+local space = GM.class.getClass("Environment"):new( 0.0000001, 14, 0, 0, nil, "Space") -- grav, temp, atmos, pressure, resources, name
+
+function GM:getSpace()
+    return space
+end
+
+--[[
+-- Think function, called every frame. This is an actual Gamemode function, disregard the lack of existence in the actual wiki.
+ ]]
+function GM:Think()
+	space:Think() -- Because it's not bound to a celestial :D
 end

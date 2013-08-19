@@ -1,5 +1,6 @@
 -- Class creation system, responsible for loading all classes and used for instantiation of objects
 
+local GM = GM
 local class = GM.class
 
 local folder = { "classes" } -- Add another other location for classes here.

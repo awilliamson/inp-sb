@@ -36,30 +36,20 @@ end
 
 if SERVER then
 
-	function ENT:getCelestial()
-		return self.celestial
-	end
-
-	function ENT:setCelestial( c )
-		if not c.is_A or not c:is_A( GM.class.getClass("Celestial") ) then error("Expected celestial to be a Celestial Object, got "..c:getClass() or type(c)) return end
-		self.celestial = c
-		return
-	end
-
 	function ENT:StartTouch( ent )
 		--Add player to the environment
+		self:getCelestial():getEnvironment():addEntity( ent )
+		print("Begin Tocuh", self)
 	end
 
 	function ENT:EndTouch( ent )
 		--Remove player from the environment
+		self:getCelestial():getEnvironment():removeEntity( ent )
+		print("End Touch", self)
 	end
 
 	function ENT:Think()
-		if self:getCelestial() then
-			self:getCelestial():Think() -- Call the super to think
-		end
-
-		self:NextThink( CurTime() + 0.2 )
+		self:getCelestial():Think()
 	end
 
 end

@@ -23,6 +23,7 @@ end          ]]
 local include = include
 
 local includeTbl = {
+	"cl_convar.lua",
 	"cl_fonts.lua",
 	"cl_scoreboard.lua",
 	"cl_chat.lua",
