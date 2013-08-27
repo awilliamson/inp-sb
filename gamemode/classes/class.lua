@@ -81,6 +81,8 @@ class.new("Celestial")
 class.new("Resource")
 class.new("Environment")
 
+class.new("Icosahedron")
+
 class.new("HudComponent")
 class.new("HudPanel")
 class.new("HudBarIndicator")

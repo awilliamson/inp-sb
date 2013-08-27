@@ -135,11 +135,6 @@ end
 -- Case06 -> star name
 ---
 
-
-
-local env_data = {}
-local env_classes = { "envSun", "logic_case" }
-
 local function getKey( key )
 	if type(key) ~= "string" then error("Expected String, got",type(key)) return key end
 	if string.find(key,"Case") and tonumber( string.sub(key, 5) ) then
@@ -154,25 +149,44 @@ local function spawnEnvironments( list )
 
 		PrintTable(v)
 
-		if v[1] == "planet" or v[1] == "planet2" then
-			if v[1] == "planet2" then v[6] = v[7] end -- Override night temp as norm temp
-			local obj = GM.class.getClass("Celestial"):new()
+		local obj = GM.class.getClass("Celestial"):new()
+		local env
+		local ent
+		local r
 
-			local env = GM.class.getClass("Environment"):new( v[3], v[6], v[4], v[2], nil, (v[1] == "planet2" and v[13] or "") ) --grav,temp,atmos, radius, resources, name
+		local type = v[1]
+
+		if type == "planet" or type == "planet2" or type == "cube" then
+
+			if type == "planet2" or type == "cube" then v[6] = v[7] end -- Override night temp as norm temp
+
+			r = tonumber(v[2])
+			env = GM.class.getClass("Environment"):new( v[3], v[6], v[4], r, nil, ((type == "planet2" or type == "cube") and v[13] or "Planet") ) -- grav, temp, atmos, radius, resources, name
+
+		elseif type == "star" then
+
+			r = 512
+			env = GM.class.getClass("Environment"):new( 0, 10000, 0, r, nil, "Star" ) -- grav, temp, atmos, radius, resources, name
+
+		elseif type == "star2" then
+
+			r = tonumber(v[2])
+			env = GM.class.getClass("Environment"):new( 0, v[5], 0, r, nil, (string.len(v[6] or "") > 0 and v[6] or "Star") )
+
+		end
+
+		if env and obj and r then
 			obj:setEnvironment(env) -- Bind Environment IMMEDIATELY!
 
-			local ent = ents.Create("infinity_planet")
+			ent = ents.Create("infinity_planet")
 			ent:SetPos( v.ent:GetPos())
 			ent:SetAngles( v.ent:GetAngles() )
 			ent:Spawn()
 
-			local r = v[2]
 			ent:PhysicsInitSphere(r)
 			ent:SetCollisionBounds( Vector(-r,-r,-r), Vector(r,r,r) )
 
 			obj:setEntity(ent) -- Bind the entity to the celestial
-
-			print(obj)
 
 		end
 	end
@@ -185,22 +199,28 @@ end
 --
  ]]
 
+local env_classes = { "env_sun", "logic_case" }
+
 function GM:InitPostEntity()
 	print("We're doing post Entity shit")
 
-	local ents = ents.FindByClass("logic_case")
-	for _, ent in pairs(ents) do
-		local tbl = { ent = ent }
-		local vals = ent:GetKeyValues()
-		for k, v in pairs(vals) do
-			tbl[ getKey( k ) ] = v
+	for i=1, #env_classes do
+		local env_data = {}
+		local ents = ents.FindByClass(env_classes[i])
+
+		for _, ent in pairs(ents) do
+			local tbl = { ent = ent }
+			local vals = ent:GetKeyValues()
+			for k, v in pairs(vals) do
+				tbl[ getKey( k ) ] = v
+			end
+			table.insert(env_data, tbl )
 		end
-		table.insert(env_data, tbl )
+
+		spawnEnvironments( env_data )
+
+		print("We've finished that bollocks")
 	end
-
-	spawnEnvironments( env_data )
-
-	print("We've finished that bollocks")
 end
 
 function GM:OnEnterEnvironment(env, ent)

@@ -184,9 +184,7 @@ local function genComponents()
 
 		local think = fpsInd.think
 		fpsInd.think = function(self)
-			if tostring(os.time())[-1] % 2 == 0 then
-				self:setTarget(1/math.Clamp(FrameTime(), 0.0001, 10))
-			end
+			self:setTarget(1/math.Clamp(FrameTime(), 0.0001, 10))
 			think(self)
 		end
 

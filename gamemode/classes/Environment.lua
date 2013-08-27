@@ -37,88 +37,14 @@ function C:setName( n )
 	self.name = n
 	return
 end
---[[
-function C:setEnvironmentOnEntity( ent, env )
-	if env ~= nil and env.is_A and env:is_A( GM.class.getClass("Environment")) then
-
-		-- If the current ent doesn't have an environment or it's not the same as the one we're setting, then remove the ent from the old place
-		if ent.getEnvironment and ent:getEnvironment() ~= env then
-			ent:getEnvironment():removeEntity( ent )
-		end
-
-		env:addEntity( ent )
-
-		-- Assign the env to the ent's getEnvironment function
-		local this = env
-		ent.getEnvironment = function()
-			return this
-		end
-
-		return true
-	else
-		error("Expected Environment on setEnvironmentOnEntity()")
-		return false
-	end
-end
-
-function C:checkContainedEntities()
-	for k,v in pairs( self:getEntities() ) do
-
-		if self:entInRadius( v ) then
-
-			if v:IsPlayer() then
-				print(v, "in radius of ",self:getName())
-			end
-
-			-- When things are added to the entities table, we should go and set their environments correctly
-			if v.getEnvironment and v:getEnvironment() ~= self then self:setEnvironmentOnEntity( v, self ) end
-
-
-			-- Set our attributes on the player
-			local phys = v:GetPhysicsObject()
-			if IsValid(phys) then
-				if self:getGravity() <= 0 then
-					v:SetGravity(0.00001)
-				else
-					v:SetGravity(self:getGravity())
-				end
-
-				if self:getGravity() > 0.01 then
-					phys:EnableGravity( true )
-				else
-					phys:EnableGravity( false )
-				end
-
-				if self:getPressure() > 0.01 then
-					phys:EnableDrag( true )
-				else
-					phys:EnableDrag( false)
-				end
-
-			end
-
-		else -- Out of radius, waiting for endTouch to catch up
-			self:removeEntity( v )
-		end
-	end
-end   ]]
-
-function C:updateEnvironmentOnEntities()
-	for k, v in pairs( self:getEntities() ) do
-		self:updateEntity( v )
-	end
-end
 
 function C:updateEntity( e )
 	-- This is where we set an ents gravity and physical vars
-	local phys = e:GetPhysicsObject()
-	if IsValid(phys) then
-		if self:getGravity() <= 0 then
-			e:SetGravity(0.00001)
-		else
-			e:SetGravity(self:getGravity())
-		end
 
+	e:SetGravity( math.max( self:getGravity(), 0.000001 ) )
+
+	local phys = e:GetPhysicsObject()
+	if IsValid(phys) and e and not e:IsPlayer() then
 		if self:getGravity() > 0.01 then
 			phys:EnableGravity( true )
 		else
@@ -148,8 +74,8 @@ function C:setEnvironment( e, v )
 end
 
 function C:updateEntities()
-	for k,v in pairs( self:getEntities() ) do
-		if GM:isValid( v ) then
+	for _, v in pairs( player.GetAll() ) do
+		if self:getEntities()[v] and GM:isValid( v ) then
 			if self:getCelestial():getEntity():GetPos():Distance( v:GetPos() ) <= self:getRadius() then
 				if not v.getEnvironment or v:getEnvironment() ~= self then
 					self:setEnvironment( v, self )
@@ -160,9 +86,8 @@ function C:updateEntities()
 				end
 			end
 		else
-			self:removeEntity(v)
+			self:removeEntity( v )
 		end
-
 	end
 end
 
@@ -171,17 +96,20 @@ function C:getEntities()
 end
 
 function C:hasEntity( o )
-	return self:getEntities()[o:EntIndex()] ~= nil
+	return self:getEntities()[ o ] ~= nil
 end
 
 function C:addEntity( o )
-	self:getEntities()[ o:EntIndex() ] = o
+	self:getEntities()[ o ] = true
+	if not o:IsPlayer() then
+		self:setEnvironment( o , self )
+	end
 	return
 end
 
 function C:removeEntity( o )
-	if self:getEntities()[ o:EntIndex() ] then
-		table.remove( self:getEntities(), o:EntIndex() )
+	if self:getEntities()[ o ] then
+		self:getEntities()[ o ] = nil
 		if o.getEnvironment == nil or o:getEnvironment() == self then --On remove, set them back to space
 			self:setEnvironment( o, GM:getSpace() )
 		end
