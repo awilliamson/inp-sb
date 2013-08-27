@@ -2,39 +2,44 @@
 
 local GM = GM
 local class = GM.class
+local AddCSLuaFile = AddCSLuaFile
+
+AddCSLuaFile()
 
 local folder = { "classes" } -- Add another other location for classes here.
 local loadedClasses = {} -- We'll use this to store our classes in.
 
-local function checkClass( name )
+local clientTbl = { --Add the files for classes used on the client here
+	"Celestial.lua",
+	"Environment.lua",
+	"Icosahedron.lua",
+	"Resource.lua",
+	"HudComponent.lua",
+	"HudPanel.lua",
+	"HudBarIndicator.lua",
+	"TextElement.lua",
+	"HudRadialIndicator.lua"
+}
 
-	for k,v in pairs(folder) do
-		-- For each location classes can exist in
-
-		local tbl = string.Explode("/", debug.getinfo(1).source:sub(2) )
-		table.remove(tbl)
-		table.remove(tbl)
-		tbl = table.concat(tbl,"/")
-
-		local path = tbl.."/"..v.."/"..name..".lua"
-
-		local f,_ = file.Find(path,"GAME")
-		if #f == 1 then -- If we've found the lua file responsible for the Class
-			return v
-		end
+if SERVER then
+	MsgN("--Sending clientside classes--")
+	for _,v in pairs(clientTbl) do
+		MsgN("File sent: "..v)
+		AddCSLuaFile(v)
 	end
-	return false -- Otherwise it doesn't exist
+	MsgN("--Finished sending classes--")
+end
 
+local function checkClass( name )
+	return table.HasValue(clientTbl, name..".lua")
 end
 
 local function includeClass(name)
-
 	local p = checkClass(name)
 	if p ~= false then
 		include(name..".lua")--"../"..p.."/"..name..".lua")
 		print("Included: "..name..".lua")
 	end
-
 end
 
 function class.isLoaded(name)
