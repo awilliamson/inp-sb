@@ -38,10 +38,17 @@ function GM:getBaseClass()
 	return BaseClass
 end
 
-include("obj_player_extend.lua")
+function GM:loadClasses()
+	local files, folders = file.Find( "gamemode/classes/*", "GAME" )
+	for i=1,#files do
+		include("gamemode/classes/" .. files[i])
+		AddCSLuaFile( "gamemode/classes/" .. files[i] )
+	end
+end
+GM:loadClasses()
 
-include("sb/shared.lua")
-include("classes/class.lua")
+
+include("obj_player_extend.lua")
 
 include( "player_class/player_base.lua" )
 include( "player_class/player_terran.lua" )
