@@ -3,6 +3,7 @@ local include = include
 local includeTbl = {
 	"sv_main.lua",
 	"sv_chat.lua"
+	"sv_convar.lua"
 }
 
 local preCacheString = 
@@ -12,6 +13,7 @@ local preCacheString =
 	"PlayerSay",
 	"AddToChatBox"
 }
+
 for _,v in pairs(includeTbl) do
 	MsgN("File included: "..v)
 	include(v)

@@ -3,6 +3,16 @@ local class = GM.class
 local const = GM.constants
 local internal = GM.internal
 
+local os = os
+local tonumber = tonumber
+local tostring = tostring
+local table = table
+local pairs = pairs
+local error = error
+local string = string
+local Color = Color
+local math = math
+
 --== HUD SYSTEM FUNCTIONS ==--
 internal.hud = {}
 
@@ -37,6 +47,8 @@ local generated = false
 
 local healthPanel, health, health_txt, armor, armor_txt -- Health Panel & Children
 local secClock, minClock, hrClock, fpsInd -- Clock & FPS
+local secLabel, minLabel, hrLabel, fpsLabel -- Some labels for Clock & FPS
+local secN, minN, hrN, fpsN -- Numbers for the Clock & FPS
 local ammoPanel, ammo, ammo_txt, alt -- Ammo Panel & Children
 
 local wepTable = {}
@@ -154,7 +166,7 @@ local function genComponents()
 
 		-- Hours
 		hrClock = GM.class.getClass("HudRadialIndicator"):new(0,0,60,60,0,0,Color(255,255,255,255),Color(50,50,50,80),false)
-		hrClock:setMaxValue( 12 ) -- 60 seconds in a minute hurr durr
+		hrClock:setMaxValue( 12 )
 		hrClock:setPipSize(1.8)
 		hrClock:setPos( minClock:getX() - minClock:getRadius() - hrClock:getRadius()- 10,minClock:getY() )
 		hrClock:setSmoothFactor(0.6)
@@ -168,15 +180,97 @@ local function genComponents()
 		-- FPS
 		fpsInd = GM.class.getClass("HudRadialIndicator"):new(0,0,60,60,0,0,Color(255,255,255,255),Color(50,50,50,80))
 		fpsInd:setMaxValue( GetConVarNumber("fps_max") or 0 )
-		fpsInd:setPos( hrClock:getX() - hrClock:getRadius() - fpsInd:getRadius()- 10,hrClock:getY() )
+		fpsInd:setPos( hrClock:getX() - hrClock:getRadius() - fpsInd:getRadius() - 10,hrClock:getY() )
 
 		local think = fpsInd.think
 		fpsInd.think = function(self)
-			if tostring(os.time())[-1] % 2 == 0 then
-				self:setTarget(1/math.Clamp(FrameTime(), 0.0001, 10))
-			end
+			self:setTarget(1/math.Clamp(FrameTime(), 0.0001, 10))
 			think(self)
 		end
+
+		---
+		--- LABELS
+		---
+
+		secLabel = GM.class.getClass("TextElement"):new(0 ,0, Color(255,255,255,255), "Seconds")
+		minLabel = GM.class.getClass("TextElement"):new(0 ,0, Color(255,255,255,255), "Minutes")
+		hrLabel = GM.class.getClass("TextElement"):new(0, 0, Color(255,255,255,255), "Hours")
+		fpsLabel = GM.class.getClass("TextElement"):new(0, 0, Color(255,255,255,255), "FPS")
+
+		secN = GM.class.getClass("TextElement"):new(0 ,0, Color(255,255,255,255), "00")
+		minN = GM.class.getClass("TextElement"):new(0 ,0, Color(255,255,255,255), "00")
+		hrN = GM.class.getClass("TextElement"):new(0, 0, Color(255,255,255,255), "00")
+		fpsN = GM.class.getClass("TextElement"):new(0, 0, Color(255,255,255,255), "00")
+
+		secLabel:setPos( secClock:getX() - secLabel:getWidth()/2, secClock:getY() + secClock:getRadius() + secLabel:getHeight()/2 )
+		minLabel:setPos( minClock:getX() - minLabel:getWidth()/2, minClock:getY() + minClock:getRadius() + minLabel:getHeight()/2 )
+		hrLabel:setPos( hrClock:getX() - hrLabel:getWidth()/2, hrClock:getY() + hrClock:getRadius() + hrLabel:getHeight()/2 )
+		fpsLabel:setPos( fpsInd:getX() - fpsLabel:getWidth()/2, fpsInd:getY() + fpsInd:getRadius() + fpsLabel:getHeight()/2 )
+
+		secN:setPos( secClock:getX() - secN:getHeight()/2, secClock:getY() - secN:getHeight()/2 )
+		minN:setPos( minClock:getX() - minN:getWidth()/2, minClock:getY() - minN:getHeight()/2 )
+		hrN:setPos( hrClock:getX() - hrN:getWidth()/2, hrClock:getY() - hrN:getHeight()/2 )
+
+		local think = secN.think
+		secN.think = function(self)
+			local val = ""
+			local time = math.floor(secClock:getValue())
+			if time < 10 then
+				val = "0"..tostring(time)
+			else
+				val = tostring( time )
+			end
+
+			self:setText( val )
+			--secN:setPos( secClock:getX() - secN:getHeight()/2, secClock:getY() - secN:getHeight()/2 )
+			think(self)
+		end
+
+		local think = minN.think
+		minN.think = function(self)
+			local val = ""
+			local time = math.floor(minClock:getValue())
+			if time < 10 then
+				val = "0"..tostring(time)
+			else
+				val = tostring( time )
+			end
+
+			self:setText( val )
+
+			--minN:setPos( minClock:getX() - minN:getWidth()/2, minClock:getY() - minN:getHeight()/2 )
+			think(self)
+		end
+
+		local think = hrN.think
+		hrN.think = function(self)
+			local val = ""
+			local time = math.floor(os.date("%H")) -- To display 24 hour time, whilst the dial is repeated by 12
+			if time < 10 then
+				val = "0"..tostring(time)
+			else
+				val = tostring( time )
+			end
+
+			self:setText( val )
+
+			--hrN:setPos( hrClock:getX() - hrN:getWidth()/2, hrClock:getY() - hrN:getHeight()/2 )
+			think(self)
+		end
+
+		local think = fpsN.think
+		fpsN.think = function(self)
+			self:setText( tostring( math.floor(fpsInd:getValue())) )
+			fpsN:setPos( fpsInd:getX() - fpsN:getWidth()/2, fpsInd:getY() - fpsN:getHeight()/2 )
+			think(self)
+		end
+
+		---
+		--- END OF LABELS
+		---
+
+
+
 		---
 		--- End of FPS & Clock
 		---
@@ -273,6 +367,18 @@ function GM:HUDPaint()
 
 		-- FPS meter
 		fpsInd:render()
+
+		-- Labels [ ORDER NOT IMPORTANT ]
+		secLabel:render()
+		minLabel:render()
+		hrLabel:render()
+		fpsLabel:render()
+
+		-- Numbers [ ORDER NOT IMPORTANT ]
+		secN:render()
+		minN:render()
+		hrN:render()
+		fpsN:render()
 	end
 
 end

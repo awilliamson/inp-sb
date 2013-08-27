@@ -5,6 +5,7 @@ local includeTbl = {
 	"sh_const.lua",
 	"sh_util.lua",
 	"sh_wrappers.lua",
+	"cl_convar.lua",
 	"cl_init.lua",
 	"cl_fonts.lua",
 	"cl_scoreboard.lua",

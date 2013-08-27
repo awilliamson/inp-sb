@@ -1,4 +1,5 @@
-local file, GM = file, GM
+local GM = GM
+local file = file
 
 --- "Find" function, this will replace the stock file.Find implemented by Garry.
 -- Use this as a replacement to the standard file.find. This enables the use of file.Find in one liners.

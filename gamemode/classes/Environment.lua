@@ -3,30 +3,117 @@
 local GM = GM
 
 local C = GM.LCS.class({
+	name = "",
 	gravity = 0,
 	atmosphere = 0,
 	temperature = 0,
 	pressure = 0,
+	radius = 0,
 	resources = {},
 	entities = {},
 	celestial = nil
 })
 
-function C:init(g,t,a,r)
+function C:init(g,t,a, r, res, n)
+	self:setName( n or self:getName() )
 	self:setGravity( g or self:getGravity() )
 	self:setTemperature( t or self:getTemperature() )
 	self:setAtmosphere( a or self:getAtmosphere() )
-	self:setResources( r or self:getResources() )
+	self:setResources( res or self:getResources() )
+	self:setRadius( r or self:getRadius() )
 	self:setPressure( self:getGravity() * self:getAtmosphere() )
+end
+
+function C:getName()
+	return self.name
+end
+
+function C:describe()
+	return self:getName()
+end
+
+function C:setName( n )
+	if type(n) ~= "string" then error("Expected string, got", type(n)) return end
+	self.name = n
+	return
+end
+
+function C:updateEntity( e )
+	-- This is where we set an ents gravity and physical vars
+
+	e:SetGravity( math.max( self:getGravity(), 0.000001 ) )
+
+	local phys = e:GetPhysicsObject()
+	if IsValid(phys) and e and not e:IsPlayer() then
+		if self:getGravity() > 0.01 then
+			phys:EnableGravity( true )
+		else
+			phys:EnableGravity( false )
+		end
+
+		if self:getPressure() > 0.01 then
+			phys:EnableDrag( true )
+		else
+			phys:EnableDrag( false)
+		end
+
+	end
+end
+
+function C:setEnvironment( e, v )
+	if v.is_A and v:is_A( GM.class.getClass("Environment")) and e.getEnvironment == nil or e:getEnvironment() ~= v then
+
+		local this = v
+		e.getEnvironment = function()
+			return this
+		end
+
+		v:updateEntity( e )
+
+	end
+end
+
+function C:updateEntities()
+	for _, v in pairs( player.GetAll() ) do
+		if self:getEntities()[v] and GM:isValid( v ) then
+			if self:getCelestial():getEntity():GetPos():Distance( v:GetPos() ) <= self:getRadius() then
+				if not v.getEnvironment or v:getEnvironment() ~= self then
+					self:setEnvironment( v, self )
+				end
+			else
+				if v.getEnvironment and v:getEnvironment() ~= GM:getSpace() then
+					self:setEnvironment( v, GM:getSpace() )
+				end
+			end
+		else
+			self:removeEntity( v )
+		end
+	end
 end
 
 function C:getEntities()
 	return self.entities
 end
 
+function C:hasEntity( o )
+	return self:getEntities()[ o ] ~= nil
+end
+
 function C:addEntity( o )
-	if o.EntIndex and o:EntIndex() and not self.entities[ o:EntIndex() ] then
-		self.entities[ o:EntIndex() ] = o
+	self:getEntities()[ o ] = true
+	if not o:IsPlayer() then
+		self:setEnvironment( o , self )
+	end
+	return
+end
+
+function C:removeEntity( o )
+	if self:getEntities()[ o ] then
+		self:getEntities()[ o ] = nil
+		if o.getEnvironment == nil or o:getEnvironment() == self then --On remove, set them back to space
+			self:setEnvironment( o, GM:getSpace() )
+		end
+
 	end
 	return
 end
@@ -57,7 +144,7 @@ end
 
 function C:setTemperature( t )
 	if not tonumber(t) then error("Expected number, got "..type(t)) return end
-	self.temperature = t
+	self.temperature = tonumber(t)
 	return
 end
 
@@ -67,7 +154,17 @@ end
 
 function C:setAtmosphere( a )
 	if not tonumber(a) then error("Expected number, got "..type(a)) return end
-	self.atmosphere = a
+	self.atmosphere = tonumber(a)
+	return
+end
+
+function C:getRadius()
+	return self.radius
+end
+
+function C:setRadius( r )
+	if not tonumber(r) then error("Expected number, got "..type(r)) return end
+	self.radius = tonumber(r)
 	return
 end
 
@@ -76,8 +173,8 @@ function C:getPressure()
 end
 
 function C:setPressure( p )
-	if type(p) ~= "number" then error("Expected number, got "..type(p)) return end
-	self.pressure = p
+	if not tonumber(p) then error("Expected number, got "..type(p)) return end
+	self.pressure =  tonumber(p)
 	return
 end
 
@@ -124,7 +221,7 @@ function C:setResource( r, a )
 	if not r.is_A or not r:is_A( GM.class.getClass("Resource") ) then error("Expected resource, got"..type(r)) return end
 	if not self:getResource( r ) then
 		-- The resource isn't already in there so let's add it
-		self:addResource( r, a)
+		self:addResource( r, a )
 	end
 	if self:getResource( r ) then
 		r:setAmount( a )
@@ -133,11 +230,7 @@ function C:setResource( r, a )
 end
 
 function C:Think()
-	for k, v in pairs( self:getEntities() ) do
-
-
-
-	end
+	self:updateEntities()
 end
 
 GM.class.registerClass("Environment", C)
