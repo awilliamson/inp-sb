@@ -5,33 +5,17 @@ local class = GM.class
 
 local folder = { "classes" } -- Add another other location for classes here.
 local loadedClasses = {} -- We'll use this to store our classes in.
+local availableClasses = {}
 
 local function checkClass( name )
-
-	for k,v in pairs(folder) do
-		-- For each location classes can exist in
-
-		local tbl = string.Explode("/", debug.getinfo(1).source:sub(2) )
-		table.remove(tbl)
-		table.remove(tbl)
-		tbl = table.concat(tbl,"/")
-
-		local path = tbl.."/"..v.."/"..name..".lua"
-
-		local f,_ = file.Find(path,"GAME")
-		if #f == 1 then -- If we've found the lua file responsible for the Class
-			return v
-		end
-	end
-	return false -- Otherwise it doesn't exist
-
+	return availableClasses[name]
 end
 
 local function includeClass(name)
 
 	local p = checkClass(name)
 	if p ~= false then
-		include(name..".lua")--"../"..p.."/"..name..".lua")
+		include(name..".lua")
 		print("Included: "..name..".lua")
 	end
 
@@ -42,7 +26,7 @@ function class.isLoaded(name)
 end
 
 function class.exists(name)
-	return class.isLoaded(name) or checkClass(name) ~= false
+	return class.isLoaded(name) or checkClass(name)
 end
 
 function class.new(name, ...)
@@ -76,15 +60,21 @@ function class.getClass( name )
 	return class.isLoaded( name )
 end
 
+local function preload(name)
+	availableClasses[name] = true
+	class.new(name)
+	print("Preloaded: "..name)
+end
+
 -- Do some preloading first to get them in the table and all ready to go before they're ever called.
-class.new("Celestial")
-class.new("Resource")
-class.new("Environment")
+preload("Celestial")
+preload("Resource")
+preload("Environment")
 
-class.new("Icosahedron")
+preload("Icosahedron")
 
-class.new("HudComponent")
-class.new("HudPanel")
-class.new("HudBarIndicator")
-class.new("TextElement")
-class.new("HudRadialIndicator")
+preload("HudComponent")
+preload("HudPanel")
+preload("HudBarIndicator")
+preload("TextElement")
+preload("HudRadialIndicator")
