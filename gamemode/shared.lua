@@ -38,14 +38,39 @@ function GM:getBaseClass()
 	return BaseClass
 end
 
-function GM:loadClasses()
-	local files, folders = file.Find( "gamemode/classes/*", "GAME" )
+function GM:loadModules()
+	local files, folders = file.Find( "classes/*", "GAME" )
 	for i=1,#files do
-		include("gamemode/classes/" .. files[i])
-		AddCSLuaFile( "gamemode/classes/" .. files[i] )
+		include("classes/" .. files[i])
+		AddCSLuaFile( "classes/" .. files[i] )
+	end
+	
+	local files, folders = file.Find( "sb/*", "GAME" )
+	for i=1,#files do
+		local filename = files[i]
+		local prefix = filename:sub(1,3)
+		if prefix == "sv_" and SERVER then
+			include( "sb/" .. filename )
+		elseif prefix == "sh_" then
+			include( "sb/" .. filename )
+			AddCSLuaFile( "sb/" .. filename )
+		elseif prefix == "cl_" and CLIENT then
+			include( "sb/" .. filename )
+		elseif prefix == "cl_" and SERVER then
+			AddCSLuaFile( "sb/" .. filename )
+		end
+	end
+
+	local files, folders = file.Find( "vgui/*", "GAME" )
+	for i=1,#files do
+		if SERVER then
+			AddCSLuaFile( "vgui/" .. files[i]
+		else
+			include( "vgui/" .. files[i] )
+		end
 	end
 end
-GM:loadClasses()
+GM:loadModules()
 
 
 include("obj_player_extend.lua")
