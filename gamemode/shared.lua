@@ -58,7 +58,7 @@ function GM:loadModules()
 			include( filepath .. filename )
 		elseif prefix == "sh_" then
 			include( filepath .. filename )
-			AddCSLuaFile( "sb/" .. filename )
+			if SERVER then AddCSLuaFile( "sb/" .. filename ) end
 		elseif prefix == "cl_" and CLIENT then
 			include( filepath .. filename )
 		elseif prefix == "cl_" and SERVER then
