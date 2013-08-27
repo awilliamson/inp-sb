@@ -39,36 +39,41 @@ function GM:getBaseClass()
 end
 
 function GM:loadModules()
-	local filepath = debug.getinfo(1).source:sub(2) .. "/"
+	local filebase = debug.getinfo(1).source:sub(2) .. "/"
+	local filepath =  filebase .. "classes/"
 	
-	local files, folders = file.Find( filepath .. "classes/*", "GAME" )
+	local files, folders = file.Find( filepath .. "*", "GAME" )
 	for i=1,#files do
-		include("classes/" .. files[i])
-		AddCSLuaFile( "classes/" .. files[i] )
+		include( filepath .. files[i])
+		AddCSLuaFile( filepath .. files[i] )
 	end
 	
-	local files, folders = file.Find( filepath .. "sb/*", "GAME" )
+	filepath = filebase .. "sb/"
+	
+	local files, folders = file.Find( filepath .. "*", "GAME" )
 	for i=1,#files do
 		local filename = files[i]
 		local prefix = filename:sub(1,3)
 		if prefix == "sv_" and SERVER then
-			include( "sb/" .. filename )
+			include( filepath .. filename )
 		elseif prefix == "sh_" then
-			include( "sb/" .. filename )
+			include( filepath .. filename )
 			AddCSLuaFile( "sb/" .. filename )
 		elseif prefix == "cl_" and CLIENT then
-			include( "sb/" .. filename )
+			include( filepath .. filename )
 		elseif prefix == "cl_" and SERVER then
-			AddCSLuaFile( "sb/" .. filename )
+			AddCSLuaFile( filepath .. filename )
 		end
 	end
 
-	local files, folders = file.Find( filepath .. "vgui/*", "GAME" )
+	filepath = filebase .. "vgui/"
+
+	local files, folders = file.Find( filepath .. "*", "GAME" )
 	for i=1,#files do
 		if SERVER then
-			AddCSLuaFile( "vgui/" .. files[i] )
+			AddCSLuaFile( filepath .. files[i] )
 		else
-			include( "vgui/" .. files[i] )
+			include( filepath .. files[i] )
 		end
 	end
 end
