@@ -38,10 +38,49 @@ function GM:getBaseClass()
 	return BaseClass
 end
 
-include("obj_player_extend.lua")
+function GM:loadModules()
+	local filebase = debug.getinfo(1).source:sub(2) .. "/"
+	local filepath =  filebase .. "classes/"
+	
+	local files, folders = file.Find( filepath .. "*", "GAME" )
+	for i=1,#files do
+		include( filepath .. files[i])
+		AddCSLuaFile( filepath .. files[i] )
+	end
+	
+	filepath = filebase .. "sb/"
+	
+	local files, folders = file.Find( filepath .. "*", "GAME" )
+	for i=1,#files do
+		local filename = files[i]
+		local prefix = filename:sub(1,3)
+		if prefix == "sv_" and SERVER then
+			include( filepath .. filename )
+		elseif prefix == "sh_" then
+			include( filepath .. filename )
+			if SERVER then AddCSLuaFile( "sb/" .. filename ) end
+		elseif prefix == "cl_" and CLIENT then
+			include( filepath .. filename )
+		elseif prefix == "cl_" and SERVER then
+			AddCSLuaFile( filepath .. filename )
+		end
+	end
 
-include("sb/shared.lua")
-include("classes/class.lua")
+	filepath = filebase .. "vgui/"
+
+	local files, folders = file.Find( filepath .. "*", "GAME" )
+	for i=1,#files do
+		if SERVER then
+			AddCSLuaFile( filepath .. files[i] )
+		else
+			include( filepath .. files[i] )
+		end
+	end
+end
+GM:loadModules()
+
+
+include("obj_player_extend.lua")
 
 include( "player_class/player_base.lua" )
 include( "player_class/player_terran.lua" )
