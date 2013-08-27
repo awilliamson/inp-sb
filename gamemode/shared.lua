@@ -39,13 +39,15 @@ function GM:getBaseClass()
 end
 
 function GM:loadModules()
-	local files, folders = file.Find( "classes/*", "GAME" )
+	local filepath = debug.getinfo(1).source:sub(2) .. "/"
+	
+	local files, folders = file.Find( filepath .. "classes/*", "GAME" )
 	for i=1,#files do
 		include("classes/" .. files[i])
 		AddCSLuaFile( "classes/" .. files[i] )
 	end
 	
-	local files, folders = file.Find( "sb/*", "GAME" )
+	local files, folders = file.Find( filepath .. "sb/*", "GAME" )
 	for i=1,#files do
 		local filename = files[i]
 		local prefix = filename:sub(1,3)
@@ -61,10 +63,10 @@ function GM:loadModules()
 		end
 	end
 
-	local files, folders = file.Find( "vgui/*", "GAME" )
+	local files, folders = file.Find( filepath .. "vgui/*", "GAME" )
 	for i=1,#files do
 		if SERVER then
-			AddCSLuaFile( "vgui/" .. files[i]
+			AddCSLuaFile( "vgui/" .. files[i] )
 		else
 			include( "vgui/" .. files[i] )
 		end
