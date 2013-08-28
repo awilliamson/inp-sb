@@ -1,8 +1,7 @@
 local AddCSLuaFile = AddCSLuaFile
 
 local includeTbl = {
-	"cl_init.lua",
-	"DChatPanel.lua"
+	"cl_init.lua"
 }
 
 for _,v in pairs(includeTbl) do
