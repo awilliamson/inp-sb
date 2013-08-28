@@ -196,6 +196,7 @@ local function OpenChat(ply, bind, pressed)
 end
 hook.Add("PlayerBindPress","ChatBind",OpenChat) -- Check binds
 
+local oldaddtext = chat.AddText
 function chat.AddText2(tab, ...)
 	--Sometimes this hasn't loaded yet when we want to put things into the chatbox, so lets give it a chance to load.
 	if not IsValid(ChatVGUI) then
@@ -248,13 +249,12 @@ function chat.AddText2(tab, ...)
 
 		body:QueueJavascript([[handleMessage("]]..insert..[[")]])
 	end
-end
-
-local oldaddtext = chat.AddText
-function chat.AddText(...)
-	chat.AddText2("ALL", ...)
 	
 	oldaddtext(...)
+end
+
+function chat.AddText(...)
+	chat.AddText2("ALL", ...)
 end
 
 net.Receive( "AddToChatBox", function()
