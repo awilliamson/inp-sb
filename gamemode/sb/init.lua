@@ -1,14 +1,17 @@
 local include = include
 
 local includeTbl = {
-	"sv_convar.lua",
-	"sv_main.lua"
+	"sv_main.lua",
+	"sv_chat.lua",
+	"sv_convar.lua"
 }
 
 local preCacheString = 
 {
 	"INPSpacebuild-Shop:StartTouch",
-	"INPSpacebuild-Shop:StopTouch"
+	"INPSpacebuild-Shop:StopTouch",
+	"PlayerSay",
+	"AddToChatBox"
 }
 
 for _,v in pairs(includeTbl) do
