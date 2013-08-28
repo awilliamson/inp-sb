@@ -22,10 +22,10 @@ end
 
 function DoSay( ply, text, isTeam )
 	if IsValid(ply) then
-		local col = team.GetColor(ply:Team())
+		local col = player_manager.RunClass( ply, "getRaceColor" )
 		
 		if isTeam then
-			for i,k in pairs(team.GetPlayers(ply:Team())) do k:ChatPrint({ply, " ["..team.GetName(ply:Team()).."]: "..text}, "TEAM") end
+			for i,k in pairs(team.GetPlayers(ply:Team())) do k:ChatPrint({ply, " ["..player_manager.RunClass( ply, "getRace" ).."]: "..text}, "TEAM") end
 		else
 			http.Post("http://diaspora-chat.eu01.aws.af.cm/server", {
 				message = text,

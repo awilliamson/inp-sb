@@ -9,12 +9,7 @@ local HtmlTemplate = [[
 				padding: 5px;
 				width: 95%;
 				padding-bottom: 0px;
-			}
-			#bottom_bar {
-				position: static;
-				bottom: 0px;
-				width: 96%;
-				height: 10px;
+				display:break-word;
 			}
 			.message {
 				padding: 1px;
@@ -25,14 +20,13 @@ local HtmlTemplate = [[
 			}
 			html
 			{
-				margin-top: 20px;
+				margin-top: 0px;
 				color:white;
 				font-family:'Verdana';
 				font-size:14px;
-				padding-bottom:20px;
+				padding-bottom:0px;
 				font-weight:700;
 				text-decoration: none;
-
 				overflow: hidden;
 			}
 			div
@@ -40,10 +34,10 @@ local HtmlTemplate = [[
 				display:break-word;
 			}
 		</style>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	</head>
 		<body>
 		<div id="messages"></div>
-		<div id="bottom_bar"></div>
 		
 		<script type="text/javascript">
 			function handleMessage(message)
@@ -54,10 +48,11 @@ local HtmlTemplate = [[
 				messParts.splice(0,1);
 				add+=messParts.join("");
 				var messageElem=document.createElement('div');
-				messageElem.class="message";
+				messageElem.className="message";
 				messageElem.innerHTML=add;
 				var messagesContainer=document.getElementById("messages");
 				messagesContainer.appendChild(messageElem);
+				$(messageElem).fadeOut(20000);
 				if(isAtBottom){document.body.scrollTop=document.body.scrollHeight}
 			}
 		</script>
@@ -72,28 +67,27 @@ local function AddChatBody(name)
 	body:SetHTML(HtmlTemplate)
 	body.html = HtmlTemplate
 	
-	body:SetPos( cx + 6, cy + 18 )
-	body:SetSize( ScrW() * .48, 182+(ScrH()*0.05) )
+	body:SetPos( cx + 5, cy + 18 )
+	body:SetSize( ScrW() * .5 - 5, 182+(ScrH()*0.05) )
 	body:SetVisible( false )
-	
+
 	ChatVGUI.Bodies[name] = body
 	
-	local OptBut = vgui.Create( "DButton", ChatVGUI )
+	local OptBut = vgui.Create( "DColorButton", ChatVGUI )
 	OptBut:SetPos( 8+(32*NumberOfBodies), 2 )
 	OptBut:SetSize( 30, 15 )
-	OptBut:SetColor( Color( 90, 90, 90, 200 ) )
+	OptBut:SetColor( Color( 90, 90, 90, 255 ) )
 	OptBut:SetText( name )
 	OptBut.LastFlash = 0
 	OptBut.IsFlashed = false
 	OptBut.ShouldFlash = false
 	OptBut.Nam = name
 	OptBut.DoClick = function( pnl )
-
-		pnl:SetColor( Color( 60, 60, 60, 200 ) )
+		pnl:SetColor( Color( 60, 60, 60, 255 ) )
 		
 		pnl.ShouldFlash = false
 		
-		pnl:SetColor( Color( 90, 90, 90, 200 ) )
+		pnl:SetColor( Color( 90, 90, 90, 255 ) )
 		
 		for i,k in pairs(ChatVGUI.Bodies) do
 			k:SetVisible(false)
@@ -103,8 +97,6 @@ local function AddChatBody(name)
 		
 		ChatVGUI.Bodies[pnl.Nam]:SetVisible( true )
 		ChatVGUI.Bodies[pnl.Nam]:SetZPos( 1000 )
-		ChatVGUI.Bodies[pnl.Nam]:SetVerticalScrollbarEnabled(true)
-		
 	end
 	
 	ChatVGUI.Bodies[name].OptBut = OptBut
@@ -115,9 +107,9 @@ end
 
 local function CreateChatGUI()
 	ChatVGUI = vgui.Create( "DPanel" )
-	ChatVGUI:SetPos( 39, ScrH() - 335 - (ScrH()*0.05) )
-	ChatVGUI:SetSize( ScrW() * .5 - 19, 200+(ScrH()*0.05) )
-	ChatVGUI:SetBGColor( Color( 70, 70, 70, 110 ) )
+	ChatVGUI:SetPos( 40, ScrH() - 335 - (ScrH()*0.05) )
+	ChatVGUI:SetSize( ScrW() * .5, 200+(ScrH()*0.05) )
+	ChatVGUI:SetBackgroundColor( Color( 70, 70, 70, 110 ) )
 	ChatVGUI:SetVisible( false )
 	ChatVGUI.Bodies = {}
 
@@ -129,17 +121,16 @@ local function CreateChatGUI()
 	ChatVGUI.Bodies["ALL"]:SetVisible(true)
 	
 	ChatVGUI.CloseLink = vgui.Create( "DButton", ChatVGUI )
-	ChatVGUI.CloseLink:SetPos( ScrW() * .5 - 35, 2 )
+	ChatVGUI.CloseLink:SetPos( ScrW() * .5 - 15, 2 )
 	ChatVGUI.CloseLink:SetText( "X" )
 	ChatVGUI.CloseLink:SetSize(15,15)
 	ChatVGUI.CloseLink:SetVisible( true )
 	ChatVGUI.CloseLink.DoClick = function() ChatVGUI:SetVisible( false ) gui.EnableScreenClicker( false ) end
 	
-
 	local tx, ty = ChatVGUI:GetPos()
 	ChatVGUI.ChatTextEntry = vgui.Create( "DTextEntry", ChatVGUI )
-	ChatVGUI.ChatTextEntry:SetPos( tx + 5, ty + 180 + (ScrH()*0.05) )
-	ChatVGUI.ChatTextEntry:SetSize( ScrW() * .5 - 50, 15 )
+	ChatVGUI.ChatTextEntry:SetPos( tx + 5, ty + 200 + (ScrH()*0.05) )
+	ChatVGUI.ChatTextEntry:SetSize( ScrW() * .5 - 15, 15 )
 	ChatVGUI.ChatTextEntry:SetVisible( true )
 	ChatVGUI.ChatTextEntry:SetEnabled( true )
 	ChatVGUI.ChatTextEntry:SetKeyboardInputEnabled( true )
@@ -153,7 +144,9 @@ local function CreateChatGUI()
 				net.SendToServer()
 			end
 			
-			ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'hidden';]])
+			ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'hidden';
+															$(".message").stop(true, true);
+															$(".message").fadeOut(10000);]])
 			ChatVGUI.ChatTextEntry:SetText( "" )
 			ChatVGUI:SetVisible( false )
 			
@@ -175,7 +168,9 @@ local function msgCreateChatVGUI(isTeam)
 	if not ChatVGUI then CreateChatGUI() end
 	
 	ChatVGUI:SetVisible(true)
-	ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'auto';]])
+	ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'auto';
+													$(".message").stop(true, true);
+													$(".message").fadeIn(200);]])
 	ChatVGUI.ChatTextEntry.IsTeam = isTeam or false
 	ChatVGUI.ChatTextEntry:MakePopup()
 	
@@ -202,6 +197,16 @@ end
 hook.Add("PlayerBindPress","ChatBind",OpenChat) -- Check binds
 
 function chat.AddText2(tab, ...)
+	--Sometimes this hasn't loaded yet when we want to put things into the chatbox, so lets give it a chance to load.
+	if not IsValid(ChatVGUI) then
+		local varargs = {...}
+		timer.Simple(1, function()
+			--Bleh have to unpack this because it dislikes being used outside of the function its used in originally.
+			chat.AddText2(tab, unpack(varargs))
+		end)
+		return
+	end
+	
 	local body = ChatVGUI.Bodies[tab]
 	local insert = ""
 	
@@ -210,8 +215,8 @@ function chat.AddText2(tab, ...)
 	for i,k in pairs({...}) do
 		local typ = string.lower(tostring(type(k)))
 		if typ == "player" then
-			local col = team.GetColor( k:Team() )
-			
+			local col = player_manager.RunClass( k, "getRaceColor" )
+
 			local rankColor = "rgba(".. col.r ..",".. col.g ..",".. col.b ..",".. col.a ..")"
 			
 			insert = insert .. [[<span class="username" style="color:]]..rankColor..[[">]] .. (k:Nick()) .. [[</span>]]
@@ -272,10 +277,10 @@ local function ChatBoxThink()
 		for k,n in pairs(ChatVGUI.Bodies) do
 			if( n.OptBut.ShouldFlash ) then
 				if( CurTime() - n.OptBut.LastFlash > .4 ) then
-					local color = Color( 60, 60, 60, 200 )
+					local color = Color( 60, 60, 60, 255 )
 					
 					if( not n.OptBut.IsFlashed ) then
-						color = Color( 30, 30, 190, 200 )
+						color = Color( 30, 30, 190, 255 )
 						n.OptBut.IsFlashed = true
 					else
 						n.OptBut.IsFlashed = false

@@ -2,7 +2,7 @@ local include = include
 
 local includeTbl = {
 	"sv_main.lua",
-	"sv_chat.lua"
+	"sv_chat.lua",
 	"sv_convar.lua"
 }
 
