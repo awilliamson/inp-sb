@@ -262,7 +262,7 @@ function chat.AddText2(tab, ...)
 
 	if colorChangeCount > 0 then insert = insert .. [[</span>]] end
 
-	if insert != "" and body != nil then
+	if insert ~= "" and body ~= nil then
 	insert = string.gsub(insert, "\"", "\\\"")
 	insert = string.gsub(insert, "\'", "\\'")
 	insert = string.gsub(insert, ":","\\:")
