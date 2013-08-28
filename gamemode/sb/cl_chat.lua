@@ -52,7 +52,7 @@ local HtmlTemplate = [[
 				messageElem.innerHTML=add;
 				var messagesContainer=document.getElementById("messages");
 				messagesContainer.appendChild(messageElem);
-				$(messageElem).fadeOut(20000);
+				$(messageElem).animate({ opacity: 0 }, 20000);
 				if(isAtBottom){document.body.scrollTop=document.body.scrollHeight}
 			}
 		</script>
@@ -146,7 +146,7 @@ local function CreateChatGUI()
 			
 			ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'hidden';
 															$(".message").stop(true, true);
-															$(".message").fadeOut(10000);]])
+															$(".message").animate({ opacity: 0 }, 10000);]])
 			ChatVGUI.ChatTextEntry:SetText( "" )
 			ChatVGUI:SetVisible( false )
 			
@@ -170,7 +170,7 @@ local function msgCreateChatVGUI(isTeam)
 	ChatVGUI:SetVisible(true)
 	ChatVGUI.Bodies[ChosenChatLevel]:QueueJavascript([[document.documentElement.style.overflow = 'auto';
 													$(".message").stop(true, true);
-													$(".message").fadeIn(200);]])
+													$(".message").animate({ opacity: 1 }, 200);]])
 	ChatVGUI.ChatTextEntry.IsTeam = isTeam or false
 	ChatVGUI.ChatTextEntry:MakePopup()
 	
