@@ -26,7 +26,7 @@ function DoSay( ply, text, isTeam )
 		
 		if isTeam then
 			local race = player_manager.RunClass( ply, "getRace" )
-			for i,k in pairs(Player.GetAll()) do
+			for i,k in pairs(player.GetAll()) do
 				if player_manager.RunClass( k, "getRace" ) == race then
 					k:ChatPrint({ply, " ["..player_manager.RunClass( ply, "getRace" ).."]: "..text}, "TEAM")
 				end
