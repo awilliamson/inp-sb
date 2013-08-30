@@ -71,8 +71,6 @@ preload("Celestial")
 preload("Resource")
 preload("Environment")
 
-preload("Icosahedron")
-
 preload("HudComponent")
 preload("HudPanel")
 preload("HudBarIndicator")

@@ -19,17 +19,3 @@ include("send.lua")
 -- Include shared
 include("shared.lua")
 include("sb/init.lua")
-
---[[
--- Initialise the shared code first
-
-include("vgui/send.lua")
-include("shared.lua")
-
-include("sb/init.lua")
-
-
-AddCSLuaFile("sb/shared.lua")
-include("sb/shared.lua")
-]]
-

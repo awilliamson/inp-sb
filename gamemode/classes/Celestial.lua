@@ -44,9 +44,6 @@ function C:setEnvironment( env )
 			end
 		end
 
-		--print("ENV CEL: ", env:getCelestial())
-		--print("SELF: ", self)
-
 		self.env = env
 	else
 		return false

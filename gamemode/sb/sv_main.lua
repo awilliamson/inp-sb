@@ -144,51 +144,48 @@ local function getKey( key )
 	end
 end
 
-local function spawnEnvironments( list )
-	for k,v in pairs( list ) do
+local function spawnEnvironment( v )
 
-		PrintTable(v)
+	local obj = GM.class.getClass("Celestial"):new()
+	local env
+	local ent
+	local r
 
-		local obj = GM.class.getClass("Celestial"):new()
-		local env
-		local ent
-		local r
+	local type = v[1]
 
-		local type = v[1]
+	if type == "planet" or type == "planet2" or type == "cube" then
 
-		if type == "planet" or type == "planet2" or type == "cube" then
+		if type == "planet2" or type == "cube" then v[6] = v[7] end -- Override night temp as norm temp
 
-			if type == "planet2" or type == "cube" then v[6] = v[7] end -- Override night temp as norm temp
+		r = tonumber(v[2])
+		env = GM.class.getClass("Environment"):new( v[3], v[6], v[4], r, nil, ((type == "planet2" or type == "cube") and v[13] or "Planet") ) -- grav, temp, atmos, radius, resources, name
 
-			r = tonumber(v[2])
-			env = GM.class.getClass("Environment"):new( v[3], v[6], v[4], r, nil, ((type == "planet2" or type == "cube") and v[13] or "Planet") ) -- grav, temp, atmos, radius, resources, name
+	elseif type == "star" then
 
-		elseif type == "star" then
+		r = 512
+		env = GM.class.getClass("Environment"):new( 0, 10000, 0, r, nil, "Star" ) -- grav, temp, atmos, radius, resources, name
 
-			r = 512
-			env = GM.class.getClass("Environment"):new( 0, 10000, 0, r, nil, "Star" ) -- grav, temp, atmos, radius, resources, name
+	elseif type == "star2" then
 
-		elseif type == "star2" then
+		r = tonumber(v[2])
+		env = GM.class.getClass("Environment"):new( 0, v[5], 0, r, nil, (string.len(v[6] or "") > 0 and v[6] or "Star") )
 
-			r = tonumber(v[2])
-			env = GM.class.getClass("Environment"):new( 0, v[5], 0, r, nil, (string.len(v[6] or "") > 0 and v[6] or "Star") )
+	end
 
-		end
+	if env and obj and r then
+		obj:setEnvironment(env) -- Bind Environment IMMEDIATELY!
 
-		if env and obj and r then
-			obj:setEnvironment(env) -- Bind Environment IMMEDIATELY!
+		ent = ents.Create("infinity_planet")
+		ent:SetPos( v.ent:GetPos())
+		ent:SetAngles( v.ent:GetAngles() )
+		ent:Spawn()
 
-			ent = ents.Create("infinity_planet")
-			ent:SetPos( v.ent:GetPos())
-			ent:SetAngles( v.ent:GetAngles() )
-			ent:Spawn()
+		ent:PhysicsInitSphere(r)
+		ent:SetCollisionBounds( Vector(-r,-r,-r), Vector(r,r,r) )
 
-			ent:PhysicsInitSphere(r)
-			ent:SetCollisionBounds( Vector(-r,-r,-r), Vector(r,r,r) )
 
-			obj:setEntity(ent) -- Bind the entity to the celestial
+		obj:setEntity(ent) -- Bind the entity to the celestial
 
-		end
 	end
 end
 
@@ -200,6 +197,7 @@ end
  ]]
 
 local env_classes = { "env_sun", "logic_case" }
+local env_data = {}
 
 function GM:InitPostEntity()
 	print("We're doing post Entity shit")
@@ -217,7 +215,9 @@ function GM:InitPostEntity()
 			table.insert(env_data, tbl )
 		end
 
-		spawnEnvironments( env_data )
+		for k,v in pairs( env_data ) do
+			spawnEnvironment( v )
+		end
 
 		print("We've finished that bollocks")
 	end

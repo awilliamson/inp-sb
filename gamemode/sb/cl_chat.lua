@@ -20,14 +20,14 @@ local HtmlTemplate = [[
 			}
 			html
 			{
+				color: white;
 				margin-top: 0px;
-				color:white;
-				font-family:'Verdana';
-				font-size:14px;
-				padding-bottom:0px;
-				font-weight:700;
-				text-decoration: none;
-				overflow: hidden;
+				font-family:'Arial';
+				font-weight:bold;
+				text-shadow: 0px 15px 5px rgba(0,0,0,0.1),
+                10px 20px 5px rgba(0,0,0,0.05),
+                -10px 20px 5px rgba(0,0,0,0.05);
+				font-size:16px;
 			}
 			div
 			{
@@ -246,7 +246,8 @@ function chat.AddText2(tab, ...)
 			if k.r and k.g and k.b then
 				local color = "rgba(".. k.r ..",".. k.g ..",".. k.b ..",".. k.a ..")"
 				if colorChangeCount > 0 then insert = insert .. [[</span>]] end
-				insert = insert .. [[<span class="username" style="color:]]..color..[[">]]
+				--insert = insert .. [[<span class="username" style="color:]]..color..[[">]]
+				insert = insert .. [[<span style="color:]]..color..[[">]]
 
 				colorChangeCount = colorChangeCount + 1
 			end

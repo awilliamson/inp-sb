@@ -74,8 +74,8 @@ function C:setEnvironment( e, v )
 end
 
 function C:updateEntities()
-	for _, v in pairs( player.GetAll() ) do
-		if self:getEntities()[v] and GM:isValid( v ) then
+	for v, _ in pairs(self:getEntities()) do
+		if GM:isValid( v ) then
 			if self:getCelestial():getEntity():GetPos():Distance( v:GetPos() ) <= self:getRadius() then
 				if not v.getEnvironment or v:getEnvironment() ~= self then
 					self:setEnvironment( v, self )
@@ -101,9 +101,6 @@ end
 
 function C:addEntity( o )
 	self:getEntities()[ o ] = true
-	if not o:IsPlayer() then
-		self:setEnvironment( o , self )
-	end
 	return
 end
 
