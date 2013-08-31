@@ -67,13 +67,6 @@ function GM:OnReloaded()
 
 end
 
---[[---------------------------------------------------------
---	Used to confirm validity of a SB entity
- ]]
-function GM:isValid( ent )
-	return IsValid( ent ) and not ent:IsWorld() and IsValid(ent:GetPhysicsObject()) and not (ent.isNoGrav and ent:isNoGrav())
-end
-
 ---
 --- Environment Stuffs
 ---
@@ -246,4 +239,13 @@ end
  ]]
 function GM:Think()
 	space:Think() -- Because it's not bound to a celestial :D
+end
+
+function GM:OnEntityCreated( e )
+
+	if GM:isValid(e) and e.getEnvironment == nil then --On remove, set them back to space
+		--GM:getSpace():addEntity(e)
+		GM:getSpace():setEnvironment( e, GM:getSpace() )
+	end
+
 end
