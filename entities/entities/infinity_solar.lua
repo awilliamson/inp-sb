@@ -34,7 +34,7 @@ function ENT:SpawnFunction(ply, tr)
 
 	local ent = ents.Create("infinity_solar")
 	if IsValid(ent) then
-		ent:SetPos( tr.HitPos + Vector(0,0,50))
+		ent:SetPos( tr.HitPos + Vector(0,0,50) )
 		ent:SetModel("models/props_phx/life_support/panel_medium.mdl")
 		ent:Spawn()
 	end
@@ -43,6 +43,16 @@ function ENT:SpawnFunction(ply, tr)
 end
 
 function ENT:SetActive() --disable use, lol
+end
+
+if CLIENT then
+	function ENT:Draw()
+		if GAMEMODE:fuzzyLook(self) then
+			GAMEMODE:AddWorldTip(self:EntIndex(), nil, 0.5, self:GetPos(), self)
+		end
+
+		self:DrawModel()
+	end
 end
 
 if SERVER then

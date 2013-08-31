@@ -379,6 +379,9 @@ function GM:HUDPaint()
 		minN:render()
 		hrN:render()
 		fpsN:render()
+
+		self:PaintWorldTips()
+		--self:PaintHudTips()
 	end
 
 end
