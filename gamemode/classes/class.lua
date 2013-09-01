@@ -69,7 +69,9 @@ end
 -- Do some preloading first to get them in the table and all ready to go before they're ever called.
 preload("Celestial")
 preload("Resource")
+
 preload("Environment")
+preload("Space")
 
 preload("HudComponent")
 preload("HudPanel")

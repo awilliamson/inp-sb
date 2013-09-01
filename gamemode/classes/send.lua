@@ -4,6 +4,7 @@ local includeTbl = {
 	"class.lua",
 	"Celestial.lua",
 	"Environment.lua",
+	"Space.lua",
 	"Resource.lua",
 	"HudComponent.lua",
 	"HudPanel.lua",

@@ -63,6 +63,10 @@ end
 function C:setEnvironment( e, v )
 	if v.is_A and v:is_A( GM.class.getClass("Environment")) and e.getEnvironment == nil or e:getEnvironment() ~= v then
 
+		if e.getEnvironment then
+			e:getEnvironment():removeEntity(e)
+		end
+
 		local this = v
 		e.getEnvironment = function()
 			return this
@@ -82,7 +86,8 @@ function C:updateEntities()
 				end
 			else
 				if v.getEnvironment and v:getEnvironment() ~= GM:getSpace() then
-					self:setEnvironment( v, GM:getSpace() )
+					GM:getSpace():addEntity( v )
+					--self:setEnvironment( v, GM:getSpace() )
 				end
 			end
 		else
@@ -108,7 +113,8 @@ function C:removeEntity( o )
 	if self:getEntities()[ o ] then
 		self:getEntities()[ o ] = nil
 		if o.getEnvironment == nil or o:getEnvironment() == self then --On remove, set them back to space
-			self:setEnvironment( o, GM:getSpace() )
+			GM:getSpace():addEntity( o )
+			--self:setEnvironment( o, GM:getSpace() )
 		end
 
 	end

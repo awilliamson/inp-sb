@@ -144,6 +144,8 @@ local function spawnEnvironment( v )
 	local ent
 	local r
 
+	PrintTable( v )
+
 	local type = v[1]
 
 	if type == "planet" or type == "planet2" or type == "cube" then
@@ -228,7 +230,8 @@ function GM:OnLeaveEnvironment(env, ent)
 	end
 end
 
-local space = GM.class.getClass("Environment"):new( 0.0000001, 14, 0, 0, nil, "Space") -- grav, temp, atmos, pressure, resources, name
+--local space = GM.class.getClass("Environment"):new( 0.0000001, 14, 0, 0, nil, "Space") -- grav, temp, atmos, pressure, resources, name
+local space = GM.class.getClass("Space"):new()
 
 function GM:getSpace()
     return space
@@ -243,8 +246,9 @@ end
 
 function GM:OnEntityCreated( e )
 
-	if GM:isValid(e) and e.getEnvironment == nil then --On remove, set them back to space
-		--GM:getSpace():addEntity(e)
+	if e.getEnvironment == nil then --On remove, set them back to space
+		print("Spac")
+		GM:getSpace():addEntity(e)
 		GM:getSpace():setEnvironment( e, GM:getSpace() )
 	end
 
