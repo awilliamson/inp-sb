@@ -12,11 +12,12 @@ local C = GM.class.getClass("Environment"):extends({
 	celestial = nil
 })
 
+function C:addEntity( o )
+	self:getEntities()[ o ] = true
+end
+
 function C:removeEntity( o )
-	if self:getEntities()[ o ] then
-		self:getEntities()[ o ] = nil
-	end
-	return
+	self:getEntities()[ o ] = nil
 end
 
 function C:updateEntities()

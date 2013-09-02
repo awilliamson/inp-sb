@@ -61,20 +61,19 @@ function C:updateEntity( e )
 end
 
 function C:setEnvironment( e, v )
-	if v.is_A and v:is_A( GM.class.getClass("Environment")) and e.getEnvironment == nil or e:getEnvironment() ~= v then
-
-		if e.getEnvironment then
-			e:getEnvironment():removeEntity(e)
+	--[[if e.getEnvironment then
+		e:getEnvironment():removeEntity(e)
+		if not v:getEntities()[ e ] then
+			v:addEntity( e )
 		end
+	end  ]]
 
-		local this = v
-		e.getEnvironment = function()
-			return this
-		end
-
-		v:updateEntity( e )
-
+	local this = v
+	e.getEnvironment = function()
+		return this
 	end
+
+	v:updateEntity( e )
 end
 
 function C:updateEntities()
@@ -82,12 +81,12 @@ function C:updateEntities()
 		if GM:isValid( v ) then
 			if self:getCelestial():getEntity():GetPos():Distance( v:GetPos() ) <= self:getRadius() then
 				if not v.getEnvironment or v:getEnvironment() ~= self then
+					GM:getSpace():removeEntity( v )
 					self:setEnvironment( v, self )
 				end
 			else
 				if v.getEnvironment and v:getEnvironment() ~= GM:getSpace() then
 					GM:getSpace():addEntity( v )
-					--self:setEnvironment( v, GM:getSpace() )
 				end
 			end
 		else
@@ -106,6 +105,7 @@ end
 
 function C:addEntity( o )
 	self:getEntities()[ o ] = true
+	GM:getSpace():removeEntity( o )
 	return
 end
 
@@ -114,9 +114,7 @@ function C:removeEntity( o )
 		self:getEntities()[ o ] = nil
 		if o.getEnvironment == nil or o:getEnvironment() == self then --On remove, set them back to space
 			GM:getSpace():addEntity( o )
-			--self:setEnvironment( o, GM:getSpace() )
 		end
-
 	end
 	return
 end
