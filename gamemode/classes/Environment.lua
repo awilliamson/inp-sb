@@ -58,15 +58,15 @@ function C:updateEntity( e )
 		end
 
 	end
+
+	if e:IsPlayer() then
+		e:SetRunSpeed(400)
+		e:SetWalkSpeed(200)
+	end
+
 end
 
 function C:setEnvironment( e, v )
-	--[[if e.getEnvironment then
-		e:getEnvironment():removeEntity(e)
-		if not v:getEntities()[ e ] then
-			v:addEntity( e )
-		end
-	end  ]]
 
 	local this = v
 	e.getEnvironment = function()
