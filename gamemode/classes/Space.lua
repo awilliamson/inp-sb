@@ -2,7 +2,7 @@ local GM = GM
 
 local C = GM.class.getClass("Environment"):extends({
 	name = "Space",
-	gravity = 1/math.pow(10,308),
+	gravity = 1/math.pow(10,40),
 	atmosphere = 0,
 	temperature = 14,
 	pressure = 0,
@@ -15,7 +15,7 @@ local C = GM.class.getClass("Environment"):extends({
 function C:updateEntity( e )
 	-- This is where we set an ents gravity and physical vars
 
-	e:SetGravity( math.max( self:getGravity(), 0.000001 ) )
+	e:SetGravity( math.max( self:getGravity(), 1/math.pow(10,40) ) )
 
 	local phys = e:GetPhysicsObject()
 	if IsValid(phys) and e and not e:IsPlayer() then
