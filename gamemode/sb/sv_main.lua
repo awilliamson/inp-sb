@@ -44,6 +44,7 @@ function GM:PlayerSpawn( ply )
 	for k,v in pairs(spawners) do
 		if(ply:getRace() == v.Race)then
 			ply:SetPos(v:GetPos())
+			ply:SetAngles(v:GetAngles())
 		end
 	end
 	--Base GM Stuff:

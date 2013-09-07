@@ -24,6 +24,8 @@ function ENT:KeyValue( key, value )
 			self.Race = "Terran"
 		elseif (value == "4") then
 			self.Race = "Neutral"
+		else
+			error("Map Compiled Incorrectly. Check settings on Shops")
 		end
 	elseif ( key == "Disable" ) then
 		self.Disable = value

@@ -24,7 +24,7 @@ function ENT:KeyValue( key, value )
 		elseif (value == "3") then
 			self.Race = "Terran"
 		else
-			self.Race = value
+			error("Map Compiled Incorrectly. Check settings on player Spawn")
 		end
 	elseif ( key == "Disable" ) then
 		self.Disable = value

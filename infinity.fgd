@@ -7,13 +7,14 @@
 
 @PointClass studio("models/editor/playerstart.mdl") = infinity_player_start : "The Spawn Points used by Spacebuild Infinity. Each map requires three of these, defining where each race begins. Each entity should have a keyvalue defining what race starts where."
 [
-	Race(choices) : "Race" : 0 : "What Spacebuild Infinity Race should start here?" =
+	angles(string) : "Pitch Yaw Roll" : "0 0 0"
+	Race(choices) : "Race" : 1 : "What Spacebuild Infinity Race should start here?" =
 	[
 		1 : "Pendrouge"
 		2 : "Radijn"
 		3 : "Terran"
 	]
-	Disabled(choices) : "Disable" : 1: "Is the spawn disabled or destroyed?" =
+	Disabled(choices) : "Disable" : 0: "Is the spawn disabled or destroyed?" =
 	[
 		0 : "False"
 		1 : "True"
@@ -22,14 +23,14 @@
 
 @SolidClass = infinity_shop : "The Shop Brush, A player (or entity) touching this will be able to access the Spacebuild Infinity Shop. It is by Race; They can all use Shops. Race is used to populate the shop. "
 [
-	Race(choices) : "Race" : 0 : "What Spacebuild Infinity Race should start here?" =
+	Race(choices) : "Race" : 4 : "What Spacebuild Infinity Race should start here?" =
 	[
 		1 : "Pendrouge"
 		2 : "Radijn"
 		3 : "Terran"
 		4 : "Neutral"
 	]
-	Disabled(choices) : "Disable" : 1: "Is the shop disabled or destroyed?" =
+	Disabled(choices) : "Disable" : 0: "Is the shop disabled or destroyed?" =
 	[
 		0 : "False"
 		1 : "True"
