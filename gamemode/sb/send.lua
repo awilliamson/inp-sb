@@ -2,9 +2,6 @@ local AddCSLuaFile = AddCSLuaFile
 
 local includeTbl = {
 	"shared.lua",
-	"sh_const.lua",
-	"sh_util.lua",
-	"sh_wrappers.lua",
 	"sh_main.lua",
 	"cl_convar.lua",
 	"cl_init.lua",

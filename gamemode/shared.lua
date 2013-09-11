@@ -23,7 +23,7 @@ GM.Author 	= "Inp (Radon and Sam)"
 GM.Email 	= "sb@inp.io"
 GM.Website	= "http://inp.io/"
 
-require "lcs"
+require("lcs")
 GM.LCS = LCS
 LCS = nil
 
@@ -38,10 +38,21 @@ function GM:getBaseClass()
 	return BaseClass
 end
 
+AddCSLuaFile("sb/sh_const.lua")
+AddCSLuaFile("sb/sh_util.lua")
+AddCSLuaFile("sb/sh_wrappers.lua")
+
+AddCSLuaFile("classes/class.lua")
+
+-- Include consts/utils/wrappers before ANYTHING!!!!
+include("sb/sh_const.lua")
+include("sb/sh_util.lua")
+include("sb/sh_wrappers.lua")
+
 include("obj_player_extend.lua")
 
-include("sb/shared.lua")
 include("classes/class.lua")
+include("sb/shared.lua")
 
 include( "player_class/player_base.lua" )
 include( "player_class/player_terran.lua" )
