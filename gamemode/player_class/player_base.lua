@@ -18,6 +18,8 @@ PLAYER.RaceColor			= Color(20,120,225,200)
 PLAYER.PlayerColor          = Vector( "0.24 0.34 0.41" )
 PLAYER.WeaponColor          = Vector( "0.30 1.80 2.10" )
 
+PLAYER.suit = nil
+
 function PLAYER:getRaceColor()
     return self.RaceColor
 end
@@ -29,7 +31,13 @@ function PLAYER:getRace()
     return self.RaceName
 end
 
+function PLAYER:getSuit()
+	return self.suit
+end
+
 function PLAYER:Init()
+	-- Setup player suit here to bind to a player :D
+	self.suit = GM.class.getClass("PlayerSuit"):new( self.Player, GM:getResourceType("Oxygen"), GM:getResourceType("CO2") ) -- ply, breathable, respired ?
 end
 
 function PLAYER:Loadout()

@@ -78,3 +78,5 @@ preload("HudPanel")
 preload("HudBarIndicator")
 preload("TextElement")
 preload("HudRadialIndicator")
+
+preload("PlayerSuit")

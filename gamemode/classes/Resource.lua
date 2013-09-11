@@ -16,7 +16,7 @@ function C:getName()
 end
 
 function C:setName( n )
-	if type(n) ~= "number" then error("Expected number, got"..type(n)) return end
+	if type(n) ~= "string" then error("Expected string, got "..type(n)) return end
 	self.name = n
 	return
 end
@@ -26,9 +26,11 @@ function C:getAmount()
 end
 
 function C:setAmount( a )
-	if type(a) ~= "number" then error("Expected number, got"..type(a)) return end
+	if type(a) ~= "number" then error("Expected number, got "..type(a)) return end
 	self.amount = a
 	return
 end
+
+GM.class.registerClass("Resource", C)
 
 

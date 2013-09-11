@@ -50,6 +50,7 @@ local secClock, minClock, hrClock, fpsInd -- Clock & FPS
 local secLabel, minLabel, hrLabel, fpsLabel -- Some labels for Clock & FPS
 local secN, minN, hrN, fpsN -- Numbers for the Clock & FPS
 local ammoPanel, ammo, ammo_txt, alt -- Ammo Panel & Children
+local infoPanel, info -- Information Panel & Children
 
 local wepTable = {}
 
@@ -337,11 +338,38 @@ local function genComponents()
 		---
 
 		---
+		--- Begin Info Panel
+		---
+
+		infoPanel = GM.class.getClass("HudPanel"):new( 0, 0, 0, 0, Color(50,50,50,150), true)
+		infoPanel:setPadding(10,10)
+		local think = infoPanel.think
+		infoPanel.think = function(self)
+			think(self)
+
+			self:setPos( 30, healthPanel:getY() - self:getHeight() - 30 )
+		end
+
+		info = GM.class.getClass("TextElement"):new(infoPanel:getX(), infoPanel:getY(), Color(255,255,255,255), "Test text for the information panel, let's see how long we can get this string and if it will wrap :D Test text for the information panel, let's see how long we can get this string and if it will wrap :D Test text for the information panel, let's see how long we can get this string and if it will wrap :D Test text for the information panel, let's see how long we can get this string and if it will wrap :D Test text for the information panel, let's see how long we can get this string and if it will wrap :D Test text for the information panel, let's see how long we can get this string and if it will wrap :D Test text for the information panel, let's see how long we can get this string and if it will wrap :D")
+		infoPanel:addChild( info )
+
+		---
+		--- End of Info Panel
+		---
+
+
+		---
 		--- Register components
 		---
 
 		GM:registerHUDComponent("HealthPanel", healthPanel) -- Optional, allows external lua scripts to call up the HUD elements for hooking etc
+		GM:registerHUDComponent("AmmoPanel", ammoPanel)
+		GM:registerHUDComponent("fpsInd", fpsInd)
+		GM:registerHUDComponent("secClock", secClock)
+		GM:registerHUDComponent("minClock", minClock)
+		GM:registerHUDComponent("hrClock", hrClock)
 		-- Don't bother with clock as it's not in a frame, and won't be used for anything other than defined here.
+
 		---
 		--- End Component Registration
 		---
@@ -380,6 +408,9 @@ function GM:HUDPaint()
 		hrN:render()
 		fpsN:render()
 
+		-- Info Panel
+		infoPanel:render()
+
 		self:PaintWorldTips()
 		--self:PaintHudTips()
 	end
@@ -391,4 +422,5 @@ local function hidehud(name)
 		if name == v then return false end
 	end
 end
+
 hook.Add("HUDShouldDraw", "SBDisableDefault", hidehud)
