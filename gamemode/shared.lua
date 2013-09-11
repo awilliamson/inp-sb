@@ -7,7 +7,8 @@
 -- For Example
 --inclde(sh_
 
-DEFINE_BASECLASS( "gamemode_base" )
+DeriveGamemode("sandbox")
+--DEFINE_BASECLASS( "gamemode_base" )
 
 local GM = GM
 local include = include

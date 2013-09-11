@@ -32,7 +32,7 @@ function GM:PlayerInitialSpawn( ply )
 	elseif rand >= 0 then
 		changeRaceClass(ply, "player_pendrouge")
 	end
-	BaseClass.PlayerInitialSpawn( self, ply )
+	--BaseClass.PlayerInitialSpawn( self, ply )
 
 end
 
