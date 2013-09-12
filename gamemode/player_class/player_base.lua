@@ -37,7 +37,7 @@ end
 
 function PLAYER:Init()
 	-- Setup player suit here to bind to a player :D
-	self.suit = GM.class.getClass("PlayerSuit"):new( self.Player, GM:getResourceType("Oxygen"), GM:getResourceType("CO2") ) -- ply, breathable, respired ?
+	self.suit = GM.class.getClass("PlayerSuit"):new( self.Player, GM:newResource("Oxygen"), GM:newResource("CO2") ) -- ply, breathable, respired ?
 end
 
 function PLAYER:Loadout()

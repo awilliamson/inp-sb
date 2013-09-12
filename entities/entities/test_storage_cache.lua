@@ -19,37 +19,18 @@ function ENT:SpawnFunction(ply, tr)
 		ent:SetPos( tr.HitPos + Vector(0,0,50) )
 		ent:SetModel("models/hunter/blocks/cube4x4x4.mdl")
 		ent:Spawn()
-		ent:Setup()
 	end
 
 	return ent
 end
 
 function ENT:Setup()
-	self:SetMaxStorage( {
-		Energy = 10000,
-		Oxygen = 10000,
-	} )
-		
-	self:SetupWirePorts()
-	self:UpdateOutputs()
-end
-
-function ENT:GetWirePorts()
-	local inputs, outputs = self.BaseClass:GetWirePorts()
-	for name,_ in pairs( self:GetMaxStorage() ) do
-		inputs[#inputs+1] = "Vent " .. name
-		outputs[#outputs+1] = name
-		outputs[#outputs+1] = "Max " .. name
+	local storage = {}
+	
+	for name,_ in pairs( GAMEMODE:getResourceTypes() ) do
+		storage[name] = GAMEMODE:newResource( name )
+		storage[name]:setMaxAmount( 10000 )
 	end
-	return inputs, outputs
-end
 
-function ENT:UpdateOutputs()
-	--[[
-	for name,_ in pairs( self:GetMaxStorage() ) do
-		WireLib.TriggerOutput( self, "Max " .. name, self:GetMaxAmount( name ) or 0 )
-		WireLib.TriggerOutput( self, name, self:GetAmount( name ) or 0 )
-	end
-	]]
+	self:SetStorage( storage )
 end

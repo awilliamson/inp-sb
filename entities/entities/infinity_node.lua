@@ -11,6 +11,8 @@ ENT.Instructions = "node"
 ENT.Spawnable = true
 ENT.AdminOnly = false
 
+if CLIENT then return end
+
 function ENT:SpawnFunction(ply, tr)
 	if (not tr.HitWorld) then return end
 
@@ -19,7 +21,6 @@ function ENT:SpawnFunction(ply, tr)
 		ent:SetPos( tr.HitPos + Vector(0,0,50) )
 		ent:SetModel("models/hunter/blocks/cube05x05x05.mdl")
 		ent:Spawn()
-		ent:Setup()
 	end
 
 	return ent
@@ -30,19 +31,23 @@ end
 -- Init & Setup
 --------------------------------------------------
 function ENT:Initialize()
-	if SERVER then
-		self:PhysicsInit( SOLID_VPHYSICS )
-		self:SetMoveType( MOVETYPE_VPHYSICS )
-		self:SetSolid( SOLID_VPHYSICS )
-	end
+	self:PhysicsInit( SOLID_VPHYSICS )
+	self:SetMoveType( MOVETYPE_VPHYSICS )
+	self:SetSolid( SOLID_VPHYSICS )
+	self:Setup()
 end
 
 function ENT:Setup()
+	local storage = {}
+	
+	for name,_ in pairs( GAMEMODE:getResourceTypes() ) do
+		storage[name] = GAMEMODE:newResource( name )
+	end
+
+	self:SetStorage( storage )
 
 	self:SetupWirePorts()
-	self.storage = {}
-	self.maxstorage = {}
-	
+	self:UpdateOutputs()
 end
 
 
@@ -50,7 +55,13 @@ end
 -- Wiring
 --------------------------------------------------
 function ENT:GetWirePorts()
-	return {}, {}
+	local inputs, outputs = {}, {}
+	for name, _ in pairs( self:GetStorage() ) do
+		outputs[#outputs+1] = name
+		outputs[#outputs+1] = "Max " .. name
+		inputs[#inputs+1] = "Vent " .. name
+	end
+	return inputs, outputs
 end
 
 function ENT:SetupWirePorts()
@@ -65,78 +76,154 @@ function ENT:SetupWirePorts()
 end
 
 function ENT:UpdateOutputs()
+	for name, _ in pairs( self:GetStorage() ) do
+		WireLib.TriggerOutput( self, name, self:GetAmount( name ) )
+		WireLib.TriggerOutput( self, "Max " .. name, self:GetMaxAmount( name ) )
+	end
+end
+
+--------------------------------------------------
+-- Linking
+--------------------------------------------------
+function ENT:Link( node )
+	if not IsValid( node ) or node:GetClass() ~= "infinity_node" then return false end
+	
+	-- Check for infinite loops
+	local current_node = node.node
+	while true do
+		if not IsValid( current_node ) then break end
+		if current_node == self then return false end
+		current_node = current_node.node
+	end
+	
+	if self:IsLinked() then
+		self:Unlink()
+	end
+	
+	self.node = node
+	
+	self:OnLink()
+end
+
+function ENT:Unlink()
+	if not self:IsLinked() then return end
+
+	self:OnUnlink()
+	self.node = nil
+end
+
+function ENT:IsLinked()
+	return self.node ~= nil
+end
+
+function ENT:OnLink()
+	--if self.node then self.node:OnLinked( self ) return end
+	
+	self:OnLinked( self )
+end
+
+function ENT:OnUnlink()
+	--if self.node then self.node:OnUnlinked( self ) return end
+	
+	self:OnUnlinked( self )
 end
 
 --------------------------------------------------
 -- Resource Handling
 --------------------------------------------------
 function ENT:OnLinked( ent )
-	self:IncreaseMaxStorage( ent:GetMaxStorage() )
+	local resources = ent:GetStorage()
+	if resources and next(resources) ~= nil then
+		
+		self:IncreaseMaxStorage( ent:GetStorage() )
+		
+	end
 end
 
 function ENT:OnUnlinked( ent )
-	local resources = ent:GetMaxStorage()
+	local resources = ent:GetStorage()
+	if resources and next(resource) ~= nil then
 	
-	for name,amount in pairs( resources ) do
-		self:ConsumeResource( name, amount )
+		for name,resource in pairs( resources ) do
+			self:ConsumeResource( name, math.min( self:GetAmount( name ), resource:getMaxAmount() ) )
+		end
+		
+		self:DecreaseMaxStorage( resources )
+		
 	end
-	
-	self:DecreaseMaxStorage( resources )
 end
+
+
+-------------------------
+-- Checks
+-------------------------
+function ENT:GetResource( name )
+	if self.node then return self.node:GetResource( name ) end
+	
+	return self.storage[name]
+end
+
+
+-------------------------
+-- Increase/DecreaseMaxStorage
+-------------------------
 
 function ENT:IncreaseMaxStorage( storage )
 	if self.node then return self.node:IncreaseMaxStorage( storage ) end
 	
-	for name,amount in pairs( storage ) do
-		self:SetMaxAmount( name, (self:GetMaxAmount( name ) or 0) + amount )
+	for name,resource in pairs( storage ) do
+		self:SetMaxAmount( name, self:GetMaxAmount( name ) + resource:getMaxAmount( name ) )
 	end
 end
 
 function ENT:DecreaseMaxStorage( storage )
 	if self.node then return self.node:DecreaseMaxStorage( storage ) end
 	
-	for name,amount in pairs( storage ) do
-		if self:HasResource( name ) then
-			self:SetMaxAmount( name, self:GetMaxAmount( name ) - amount )
-		end
+	for name,resource in pairs( storage ) do
+		self:SetMaxAmount( name, self:GetMaxAmount( name ) - resource:getMaxAmount( name ) )
 	end
 end
 
-function ENT:HasResource( name )
-	if self.node then return self.node:HasResource( name ) end
-	
-	return self.maxstorage[name] ~= nil
-end
+
+
+-------------------------
+-- Get/SetAmount
+-------------------------
 
 function ENT:GetAmount( name )
 	if self.node then return self.node:GetAmount( name ) end
 	
-	return self.storage[name]
+	return self:GetResource( name ):getAmount()
 end
 
 function ENT:SetAmount( name, amount )
 	if self.node then return self.node:SetAmount( name, amount ) end
 	
-	self.storage[name] = math.min( amount, self:GetMaxAmount( name ) )
+	local resource = self:GetResource( name )
+	resource:setAmount( math.min( amount, resource:getMaxAmount() ) )
 end
 
 function ENT:GetMaxAmount( name )
 	if self.node then return self.node:GetMaxAmount( name ) end
 	
-	return self.maxstorage[name]
+	return self:GetResource( name ):getMaxAmount()
 end
 
 function ENT:SetMaxAmount( name, amount )
 	if self.node then return self.node:SetMaxAmount( name, amount ) end
 	
-	self.maxstorage[name] = math.max((self.maxstorage[name] or 0) - amount,0)
-	if self.maxstorage[name] == 0 then self.maxstorage[name] = nil end
+	self:GetResource( name ):setMaxAmount( math.max( amount, 0 ) )
 end
+
+
+-------------------------
+-- Supply/ConsumeResource
+-------------------------
 
 function ENT:ConsumeResource( name, amount )
 	if self.node then return self.node:ConsumeResource( name, amount ) end
 	
-	if not self:HasStorage( name ) then return false end
+	if not self:GetResource( name ) then return false end
 
 	local current_amount = self:GetAmount( name )
 		
@@ -151,7 +238,7 @@ end
 function ENT:SupplyResource( name, amount )
 	if self.node then return self.node:SupplyResource( name, amount ) end
 	
-	if not self:HasResource( name ) then return false end
+	if not self:GetResource( name ) then return false end
 	
 	local max_amount = self:GetMaxAmount( name )
 	local current_amount = self:GetAmount( name )
@@ -165,12 +252,16 @@ function ENT:SupplyResource( name, amount )
 	end
 end
 
-function ENT:GetMaxStorage()
-	return self.maxstorage or {}
+-------------------------
+-- Get/SetStorage
+-------------------------
+
+function ENT:GetStorage()
+	return self.storage
 end
 
-function ENT:SetMaxStorage( storage )
-	self.maxstorage = storage
+function ENT:SetStorage( storage )
+	self.storage = storage
 end
 
 --------------------------------------------------

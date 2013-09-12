@@ -6,13 +6,13 @@ local includeTbl = {
 	"Environment.lua",
 	"Space.lua",
 	"Resource.lua",
+	"Network",
 	"HudComponent.lua",
 	"HudPanel.lua",
 	"HudBarIndicator.lua",
 	"TextElement.lua",
 	"HudRadialIndicator.lua",
 	"PlayerSuit.lua",
-	"Node.lua"
 }
 
 for _,v in pairs(includeTbl) do

@@ -8,26 +8,29 @@ function GM:isValid( ent )
 	return IsValid( ent ) and not ent:IsWorld() and IsValid(ent:GetPhysicsObject()) -- and not (ent.isNoGrav and ent:isNoGrav())
 end
 
-local types = {}
-function GM:defineResourceType( o )
-	if o.is_A and o:is_A(GM.class.getClass("Resource")) then
-		-- The object is a valid resource
-		types[o:getName()] = o
-		return true
+local types = {
+	["Energy"] = true,
+	["Oxygen"] = true,
+	["CO2"] = true,
+	["Water"] = true,
+	--["Heavy Water"] = true,
+	["Hydrogen"] = true,
+	["Nitrogen"] = true,
+}
+
+function GM:getResourceTypes()
+	return types
+end
+
+function GM:addResourceType( name )
+	if not types[name] then
+		types[name] = true
 	end
-	return false
 end
 
-function GM:getResourceType(s)
-	return types[s] or nil
+function GM:newResource( name )
+	if types[name] then
+		return GM.class.getClass("Resource"):new(name)
+	end
 end
-
--- Let's define some custom types ourselves :D
-GM:defineResourceType( GM.class.getClass("Resource"):new("Energy") )
-GM:defineResourceType( GM.class.getClass("Resource"):new("Oxygen") )
-GM:defineResourceType( GM.class.getClass("Resource"):new("CO2") )
-GM:defineResourceType( GM.class.getClass("Resource"):new("Water") )
-GM:defineResourceType( GM.class.getClass("Resource"):new("Heavy Water") )
-GM:defineResourceType( GM.class.getClass("Resource"):new("Hydrogen") )
-GM:defineResourceType( GM.class.getClass("Resource"):new("Nitrogen") )
 

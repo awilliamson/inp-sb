@@ -11,6 +11,16 @@ ENT.Instructions = "Point the top purple/black bit towards to hot glowly thing"
 ENT.Spawnable = true
 ENT.AdminOnly = false
 
+if CLIENT then
+	function ENT:Draw()
+		if GAMEMODE:fuzzyLook(self) then
+			GAMEMODE:AddWorldTip(self:EntIndex(), nil, 0.5, self:GetPos(), self)
+		end
+
+		self:DrawModel()
+	end
+	return
+end
 
 function ENT:SpawnFunction(ply, tr)
 	if (not tr.HitWorld) then return end
@@ -20,7 +30,6 @@ function ENT:SpawnFunction(ply, tr)
 		ent:SetPos( tr.HitPos + Vector(0,0,50) )
 		ent:SetModel("models/props_phx/life_support/panel_medium.mdl")
 		ent:Spawn()
-		ent:Setup()
 	end
 
 	return ent
@@ -28,7 +37,7 @@ end
 
 function ENT:GetWirePorts()
 	local inputs, outputs = self.BaseClass:GetWirePorts()
-	outputs[#outputs+1] = "Generated Energy"
+	outputs[#outputs+1] = "Generating Energy"
 	return inputs, outputs
 end
 
@@ -36,12 +45,7 @@ function ENT:Generate()
 	self:SupplyResource( "Energy", 10 )
 end
 
-if CLIENT then
-	function ENT:Draw()
-		if GAMEMODE:fuzzyLook(self) then
-			GAMEMODE:AddWorldTip(self:EntIndex(), nil, 0.5, self:GetPos(), self)
-		end
-
-		self:DrawModel()
-	end
+function ENT:UpdateOutputs()
+	WireLib.TriggerOutput( self, "Generating Energy", self:IsOn() and 10 or 0 )
 end
+

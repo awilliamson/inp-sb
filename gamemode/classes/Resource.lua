@@ -3,12 +3,14 @@ local GM = GM
 
 local C = GM.LCS.class({
 	name = "",
-	amount = 0
+	amount = 0,
+	max = 0
 })
 
-function C:init(n, a)
-	self:setName( n or self:getName())
-	self:setAmount( a or self:getAmount())
+function C:init(name, amount, max )
+	self:setName( name or self:getName() )
+	self:setAmount( amount or self:getAmount() )
+	self:setMaxAmount( max or self:getMaxAmount() )
 end
 
 function C:getName()
@@ -16,9 +18,7 @@ function C:getName()
 end
 
 function C:setName( n )
-	if type(n) ~= "string" then error("Expected string, got "..type(n)) return end
 	self.name = n
-	return
 end
 
 function C:getAmount()
@@ -26,9 +26,16 @@ function C:getAmount()
 end
 
 function C:setAmount( a )
-	if type(a) ~= "number" then error("Expected number, got "..type(a)) return end
 	self.amount = a
 	return
+end
+
+function C:getMaxAmount()
+	return self.max
+end
+
+function C:setMaxAmount( a )
+	self.max = a
 end
 
 GM.class.registerClass("Resource", C)

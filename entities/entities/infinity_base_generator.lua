@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-DEFINE_BASECLASS("infinity_base_storage")
+DEFINE_BASECLASS("infinity_node")
 
 ENT.PrintName = "SB Infinity Generator"
 ENT.Author = "Divran"
@@ -11,24 +11,49 @@ ENT.Instructions = "Derive from this for anything with resource generation"
 ENT.Spawnable = false
 ENT.AdminOnly = false
 
+if CLIENT then return end
+
 function ENT:Setup()
 	self:SetupWirePorts()
+	self:SetUseType( SIMPLE_USE )
 end
 
 function ENT:GetWirePorts()
-	local inputs, outputs = self.BaseClass:GetWirePorts()
+	local inputs, outputs = {}, {}
 	inputs[#inputs+1] = "On"
 	inputs[#inputs+1] = "Multiplier"
+	outputs[#outputs+1] = "On"
 	return inputs, outputs
+end
+
+function ENT:TriggerInput( name, value )
+	if name == "On" then
+		if value ~= 0 and not self:IsOn() or value == 0 and self:IsOn() then
+			self:Toggle()
+		end
+	elseif name == "Multiplier" then
+		self:SetMultiplier( math.max( value, 0 ) )
+	end
 end
 
 function ENT:Think()
 	if self:IsOn() then
 		self:Generate()
 	end
+	self:UpdateOutputs()
+	self:NextThink( CurTime() + 1 )
+	return true
 end
 
 function ENT:Generate()
+end
+
+function ENT:SetMultiplier( mul )
+	self.mul = mul
+end
+
+function ENT:GetMultiplier()
+	return self.mul
 end
 
 function ENT:IsOn()
@@ -43,6 +68,8 @@ function ENT:Toggle()
 	else
 		self.on = true
 	end
+	
+	WireLib.TriggerOutput( self, "On", self:IsOn() and 1 or 0 )
 end
 
 function ENT:Use( ply )
@@ -50,11 +77,3 @@ function ENT:Use( ply )
 		self:Toggle()
 	end
 end
-
--- Init register ( use ENUM )
-
--- Hook onto draw for world/hud tips
-
--- Off/On methods + Toggle
-
--- Restore support & GarryDupe
