@@ -80,3 +80,5 @@ preload("TextElement")
 preload("HudRadialIndicator")
 
 preload("PlayerSuit")
+
+preload("Node")

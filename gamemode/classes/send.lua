@@ -11,7 +11,8 @@ local includeTbl = {
 	"HudBarIndicator.lua",
 	"TextElement.lua",
 	"HudRadialIndicator.lua",
-	"PlayerSuit.lua"
+	"PlayerSuit.lua",
+	"Node.lua"
 }
 
 for _,v in pairs(includeTbl) do
