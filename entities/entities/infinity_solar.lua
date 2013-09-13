@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 DEFINE_BASECLASS("infinity_base_generator")
 
-ENT.PrintName = "Solar Generator"
+ENT.PrintName = "Solar Panel"
 ENT.Author = "Radon"
 ENT.Contact = "sb@inp.io"
 ENT.Purpose = "Generating energy from solar power"
@@ -36,16 +36,15 @@ function ENT:SpawnFunction(ply, tr)
 end
 
 function ENT:GetWirePorts()
-	local inputs, outputs = self.BaseClass:GetWirePorts()
-	outputs[#outputs+1] = "Generating Energy"
+	local inputs, outputs = {}, { "On", "Generating Energy" }
 	return inputs, outputs
 end
 
 function ENT:Generate()
-	self:SupplyResource( "Energy", 10 )
+	self:SupplyResource( "Energy", 10 * self:GetBaseMultiplier() )
 end
 
 function ENT:UpdateOutputs()
-	WireLib.TriggerOutput( self, "Generating Energy", self:IsOn() and 10 or 0 )
+	WireLib.TriggerOutput( self, "Generating Energy", self:IsOn() and (10 * self:GetBaseMultiplier()) or 0 )
 end
 

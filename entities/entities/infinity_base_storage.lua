@@ -14,3 +14,26 @@ ENT.AdminOnly = false
 if CLIENT then return end
 
 function ENT:GetWirePorts() return {}, {} end
+
+function ENT:Setup()
+	self:SetMultiplier( 1 )
+	self:SetBaseMultiplier( self:GetPhysicsObject():GetVolume() / 1000 )
+end
+
+function ENT:SetMultiplier( mul )
+	self.mul = mul
+end
+
+function ENT:GetMultiplier()
+	return self.mul
+end
+
+function ENT:GetBaseMultiplier()
+	return self.basemul
+end
+
+function ENT:SetBaseMultiplier( mul )
+	self.basemul = mul
+end
+
+function ENT:UpdateOutputs() end

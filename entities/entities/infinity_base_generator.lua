@@ -14,6 +14,8 @@ ENT.AdminOnly = false
 if CLIENT then return end
 
 function ENT:Setup()
+	self:SetMultiplier( 1 )
+	self:SetBaseMultiplier( self:GetPhysicsObject():GetVolume() / 1000 )
 	self:SetupWirePorts()
 	self:SetUseType( SIMPLE_USE )
 end
@@ -38,7 +40,11 @@ end
 
 function ENT:Think()
 	if self:IsOn() then
-		self:Generate()
+		if not self:IsLinked() then
+			self.on = false
+		else
+			self:Generate()
+		end
 	end
 	self:UpdateOutputs()
 	self:NextThink( CurTime() + 1 )
@@ -54,6 +60,14 @@ end
 
 function ENT:GetMultiplier()
 	return self.mul
+end
+
+function ENT:GetBaseMultiplier()
+	return self.basemul
+end
+
+function ENT:SetBaseMultiplier( mul )
+	self.basemul = mul
 end
 
 function ENT:IsOn()
@@ -73,7 +87,5 @@ function ENT:Toggle()
 end
 
 function ENT:Use( ply )
-	if hook.Run( "CanTool", ply, { Entity = self }, "sb_canuse" ) then
-		self:Toggle()
-	end
+	self:Toggle()
 end

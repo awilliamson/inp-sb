@@ -101,6 +101,7 @@ function ENT:Link( node )
 	end
 	
 	self.node = node
+	self.node:AddLink( self )
 	
 	self:OnLink()
 end
@@ -109,7 +110,24 @@ function ENT:Unlink()
 	if not self:IsLinked() then return end
 
 	self:OnUnlink()
+	
+	self.node:RemoveLink( self )
 	self.node = nil
+end
+
+ENT.links = {}
+function ENT:AddLink( ent )
+	self.links[ent] = true
+end
+
+function ENT:RemoveLink( ent )
+	self.links[ent] = nil
+end
+
+function ENT:UnlinkAll()
+	for ent,_ in pairs( self.links ) do
+		ent:Unlink()
+	end
 end
 
 function ENT:IsLinked()
